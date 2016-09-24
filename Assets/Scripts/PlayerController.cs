@@ -148,10 +148,7 @@ public class PlayerController : MonoBehaviour {
                 this.transform.position = this.transform.position + new Vector3(0f, .25f, 0f);
                 m_playerHitBox.size = new Vector2(.5f, 1f);
             }
-            //apply gravity
-            velocity.y += gravity * Time.deltaTime;
-            // perform movement
-            m_controller.move(velocity * Time.deltaTime);
+                //here
             if (!m_crouch)
             {
                 m_animator.setAnimation("Idle");
@@ -161,6 +158,10 @@ public class PlayerController : MonoBehaviour {
                 m_animator.setAnimation("Crouch");
             }
         }
+        //apply gravity
+        velocity.y += gravity * Time.deltaTime;
+        // perform movement
+        m_controller.move(velocity * Time.deltaTime);
     }
 
     // Checks if player wants to roll, if so rolls
