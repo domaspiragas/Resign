@@ -20,6 +20,13 @@ public class MeleeWeapon : MonoBehaviour
     private float m_attackDuration;
     private bool m_attacking = false;
 
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.tag == "Enemy")
+        {
+            col.gameObject.GetComponent<StationaryEnemy>().TakeDamage(damage);
+        }
+    }
     void Start()
     {
         m_attackDuration = attackDuration;
