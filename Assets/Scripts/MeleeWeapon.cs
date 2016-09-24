@@ -50,13 +50,16 @@ public class MeleeWeapon : MonoBehaviour
             }
         }
     }
-    public void Swing(float currentTime)
+    // if successful return true, if not return false
+    public bool Swing(float currentTime)
     {
         if (currentTime - m_previousAttackTime > attackRate + attackDelay)
         {
             m_attacking = true;
             m_previousAttackTime = Time.time;
+            return true;
         }
+        else return false;
 
     }
 

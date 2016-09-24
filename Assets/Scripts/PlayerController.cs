@@ -4,15 +4,25 @@ using Prime31;
 
 public class PlayerController : MonoBehaviour {
 
-
+    // Weapons
+    //TODO: Get rid of these and just use array index 0 for starter weapons
     private MeleeWeapon m_meleeWeapon;
     private RangedWeapon m_rangedWeapon;
     //object for raycasting
     private CharacterController2D m_controller;
     //object for animations
     private AnimationController2D m_animator;
+    // player's hitbox
+    private BoxCollider2D m_playerHitBox;
+    //bools for player state
     private bool m_playerControl = true;
     private bool m_roll = false;
+    private bool m_crouch = false;
+    private bool m_meleeAttack = false;
+
+    //melee animation timer
+    private float m_meleeTimer = 0;
+    //roll cooldown
     private float m_rollTimer = 0;
     private float m_rollCooldownTimestamp;
 
@@ -22,12 +32,24 @@ public class PlayerController : MonoBehaviour {
     public GameObject meleeWeapon;
     public GameObject rangedWeapon;
 
-    public float runSpeed = 3f;
+    /* ADJUSTABLE IN UNITY VALUES */
+    // movement
+    public float movementSpeed = 6f;
+    public float crouchMovementSpeed = 3f;
+
+    // jump
     public float jumpHeight = 2f;
+    public float crouchJumpHeight = 1f;
+
+    // roll
     public float rollTime = 2f;
     public float rollSpeed = 0.5f;
     public float rollCooldown = 3f;
+
     public float gravity = -30f;
+
+    public MeleeWeapon[] meleeWeapons = new MeleeWeapon[5];
+    public RangedWeapon[] rangedWeapons = new RangedWeapon[5];
     
 	// Use this for initialization
 	void Start ()
@@ -35,6 +57,7 @@ public class PlayerController : MonoBehaviour {
 
         m_controller = gameObject.GetComponent<CharacterController2D>();
         m_animator = gameObject.GetComponent<AnimationController2D>();
+        m_playerHitBox = gameObject.GetComponent<BoxCollider2D>();
         //Initial weapons loaded in
         m_rangedWeapon = (RangedWeapon)rangedWeapon.GetComponent(typeof(RangedWeapon));
         m_meleeWeapon = (MeleeWeapon)meleeWeapon.GetComponent(typeof(MeleeWeapon));
@@ -64,32 +87,79 @@ public class PlayerController : MonoBehaviour {
         //elilminate sliding
         velocity.x = 0;
 
-        if (!m_roll)
+        if (!m_roll && !m_meleeAttack)
         {
             // D runs right
             if (Input.GetKey(KeyCode.D))
             {
-                velocity.x = runSpeed;
+                // if we're not crouching move normal speed
+                if (!m_crouch)
+                {
+                    velocity.x = movementSpeed;
+                }
+                else
+                {
+                    velocity.x = crouchMovementSpeed;
+                }
                 //used to determine direction of animation, and roll
                 m_animator.setFacing("Right");
             }
             // A runs left
             else if(Input.GetKey(KeyCode.A))
             {
-                velocity.x = -runSpeed;
+                // if we're not crouching move normal speed
+                if (!m_crouch)
+                {
+                    velocity.x = -movementSpeed;
+                }
+                else
+                {
+                    velocity.x = -crouchMovementSpeed;
+                }
                 //used to determine direction of animation, and roll
                 m_animator.setFacing("Left");
             }
             // Space Jumps if player is on the ground
             if(Input.GetKeyDown(KeyCode.Space) && m_controller.isGrounded)
             {
-                velocity.y = Mathf.Sqrt(2f * jumpHeight * -gravity);
+                // if we're not crouching jump normal height
+                if (!m_crouch)
+                {
+                    velocity.y = Mathf.Sqrt(2f * jumpHeight * -gravity);
+                }
+                else
+                {
+                    velocity.y = Mathf.Sqrt(2f * crouchJumpHeight * -gravity);
+                }
+            }
+
+            if(Input.GetKeyDown(KeyCode.S) && m_controller.isGrounded)
+            {
+                m_crouch = true;
+                m_animator.setAnimation("Crouch");
+                // TODO: Check for a better way to adjust crouching hitbox. This way is not too bad
+                this.transform.position = this.transform.position + new Vector3(0f, -.25f, 0f);
+                m_playerHitBox.size = new Vector2(.5f, .5f);
+            }
+            if(Input.GetKeyUp(KeyCode.S))
+            {
+                m_crouch = false;
+                // TODO: Check for a better way to adjust crouching hitbox. This way is not too bad
+                this.transform.position = this.transform.position + new Vector3(0f, .25f, 0f);
+                m_playerHitBox.size = new Vector2(.5f, 1f);
             }
             //apply gravity
             velocity.y += gravity * Time.deltaTime;
             // perform movement
             m_controller.move(velocity * Time.deltaTime);
-            m_animator.setAnimation("Idle");
+            if (!m_crouch)
+            {
+                m_animator.setAnimation("Idle");
+            }
+            else
+            {
+                m_animator.setAnimation("Crouch");
+            }
         }
     }
 
@@ -97,7 +167,7 @@ public class PlayerController : MonoBehaviour {
     private void HandleRoll()
     {
         // We only want to roll if we're on the ground, and there is no cooldown.
-        if(Input.GetKeyDown(KeyCode.LeftAlt) && m_controller.isGrounded && m_rollCooldownTimestamp < Time.time)
+        if(Input.GetKeyDown(KeyCode.LeftShift) && m_controller.isGrounded && m_rollCooldownTimestamp < Time.time)
         {
             m_roll = true;
             m_rollCooldownTimestamp = Time.time + rollCooldown;
@@ -140,9 +210,24 @@ public class PlayerController : MonoBehaviour {
             m_rangedWeapon.Shoot(Time.time, m_animator.getFacing());
         }
         //swing melee (right click)
-        else if(Input.GetMouseButtonDown(1))
+        else if(Input.GetMouseButtonDown(1) && !m_meleeAttack)
         {
-            m_meleeWeapon.Swing(Time.time);
+            m_meleeAttack = true;
+            m_meleeTimer = Time.time + (m_meleeWeapon.attackDelay + m_meleeWeapon.attackDuration);
+            if (m_meleeWeapon.Swing(Time.time))
+            {
+                m_animator.setAnimation("Melee");
+            }
         }
+        if(m_meleeAttack)
+        {
+            if (m_meleeTimer < Time.time)
+            {
+                m_meleeAttack = false;
+
+                m_animator.setAnimation("Idle");
+            }
+        }
+
     }
 }
