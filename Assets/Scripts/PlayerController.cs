@@ -2,7 +2,8 @@
 using System.Collections;
 using Prime31;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : MonoBehaviour
+{
 
     // Weapons
     //TODO: Get rid of these and just use array index 0 for starter weapons
@@ -19,6 +20,8 @@ public class PlayerController : MonoBehaviour {
     private bool m_roll = false;
     private bool m_crouch = false;
     private bool m_meleeAttack = false;
+    private bool m_touchingClimbable = false;
+    private bool m_isClimbing = false;
 
     //melee animation timer
     private float m_meleeTimer = 0;
@@ -50,9 +53,9 @@ public class PlayerController : MonoBehaviour {
 
     public MeleeWeapon[] meleeWeapons = new MeleeWeapon[5];
     public RangedWeapon[] rangedWeapons = new RangedWeapon[5];
-    
-	// Use this for initialization
-	void Start ()
+
+    // Use this for initialization
+    void Start()
     {
 
         m_controller = gameObject.GetComponent<CharacterController2D>();
@@ -65,27 +68,48 @@ public class PlayerController : MonoBehaviour {
         playerCamera.GetComponent<CameraFollow2D>().startCameraFollow(this.gameObject);
         m_rollCooldownTimestamp = Time.time;
 
-	}
-	
-	// Update is called once per frame
-	void Update ()
+    }
+
+    // Update is called once per frame
+    void Update()
     {
-        if(m_playerControl)
+        if (m_playerControl)
         {
             PlayerMovement();
             HandleRoll();
             HandleAttack();
         }
 
-	}
+    }
 
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.tag == "Climbable")
+        {
+            m_touchingClimbable = true;
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D col)
+    {
+        if (col.tag == "Climbable")
+        {
+            m_touchingClimbable = false;
+            m_isClimbing = false;
+        }
+    }
     // Handles the players movement (Left and Right).
     private void PlayerMovement()
     {
         //current velocity
         Vector3 velocity = m_controller.velocity;
-        //elilminate sliding
+        //elilminate horizontal sliding
         velocity.x = 0;
+        // if we're climbing eliminate vertical sliding
+        if (m_isClimbing)
+        {
+            velocity.y = 0;
+        }
 
         if (!m_roll && !m_meleeAttack)
         {
@@ -105,7 +129,7 @@ public class PlayerController : MonoBehaviour {
                 m_animator.setFacing("Right");
             }
             // A runs left
-            else if(Input.GetKey(KeyCode.A))
+            else if (Input.GetKey(KeyCode.A))
             {
                 // if we're not crouching move normal speed
                 if (!m_crouch)
@@ -119,13 +143,15 @@ public class PlayerController : MonoBehaviour {
                 //used to determine direction of animation, and roll
                 m_animator.setFacing("Left");
             }
-            // Space Jumps if player is on the ground
-            if(Input.GetKeyDown(KeyCode.Space) && m_controller.isGrounded)
+            // Space Jumps if player is on the ground or is on a climbable object
+            if (Input.GetKeyDown(KeyCode.Space) && (m_controller.isGrounded || m_isClimbing))
             {
                 // if we're not crouching jump normal height
                 if (!m_crouch)
                 {
                     velocity.y = Mathf.Sqrt(2f * jumpHeight * -gravity);
+                    //jumping detaches us from climbable object.
+                    m_isClimbing = false;
                 }
                 else
                 {
@@ -133,22 +159,39 @@ public class PlayerController : MonoBehaviour {
                 }
             }
 
-            if(Input.GetKeyDown(KeyCode.S) && m_controller.isGrounded)
+            if (Input.GetKey(KeyCode.S))
             {
-                m_crouch = true;
-                m_animator.setAnimation("Crouch");
-                // TODO: Check for a better way to adjust crouching hitbox. This way is not too bad
-                this.transform.position = this.transform.position + new Vector3(0f, -.25f, 0f);
-                m_playerHitBox.size = new Vector2(.5f, .5f);
+                if (m_controller.isGrounded && !m_crouch)
+                {
+                    m_crouch = true;
+                    m_animator.setAnimation("Crouch");
+                    // TODO: Check for a better way to adjust crouching hitbox. This way is not too bad
+                    this.transform.position = this.transform.position + new Vector3(0f, -.25f, 0f);
+                    m_playerHitBox.size = new Vector2(.5f, .5f);
+                }
+                else if (m_isClimbing)
+                {
+                    velocity.y = -movementSpeed;
+                }
             }
-            if(Input.GetKeyUp(KeyCode.S))
+            if (Input.GetKeyUp(KeyCode.S))
             {
-                m_crouch = false;
-                // TODO: Check for a better way to adjust crouching hitbox. This way is not too bad
-                this.transform.position = this.transform.position + new Vector3(0f, .25f, 0f);
-                m_playerHitBox.size = new Vector2(.5f, 1f);
+                if (m_crouch)
+                {
+                    m_crouch = false;
+                    // TODO: Check for a better way to adjust crouching hitbox. This way is not too bad
+                    this.transform.position = this.transform.position + new Vector3(0f, .25f, 0f);
+                    m_playerHitBox.size = new Vector2(.5f, 1f);
+                }
             }
-                //here
+            // climbing
+            if (Input.GetKey(KeyCode.W) && m_touchingClimbable)
+            {
+                m_isClimbing = true;
+                velocity.y = movementSpeed;
+            }
+
+            // idle animations
             if (!m_crouch)
             {
                 m_animator.setAnimation("Idle");
@@ -158,8 +201,11 @@ public class PlayerController : MonoBehaviour {
                 m_animator.setAnimation("Crouch");
             }
         }
-        //apply gravity
-        velocity.y += gravity * Time.deltaTime;
+        //apply gravity if we're not climbing
+        if (!m_isClimbing)
+        {
+            velocity.y += gravity * Time.deltaTime;
+        }
         // perform movement
         m_controller.move(velocity * Time.deltaTime);
     }
@@ -168,7 +214,7 @@ public class PlayerController : MonoBehaviour {
     private void HandleRoll()
     {
         // We only want to roll if we're on the ground, and there is no cooldown.
-        if(Input.GetKeyDown(KeyCode.LeftShift) && m_controller.isGrounded && m_rollCooldownTimestamp < Time.time)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && m_controller.isGrounded && m_rollCooldownTimestamp < Time.time)
         {
             m_roll = true;
             m_rollCooldownTimestamp = Time.time + rollCooldown;
@@ -197,6 +243,7 @@ public class PlayerController : MonoBehaviour {
 
             //apply gravity
             velocity.y += gravity * Time.deltaTime;
+
             // perform movement
             m_controller.move(velocity * Time.deltaTime);
 
@@ -211,7 +258,7 @@ public class PlayerController : MonoBehaviour {
             m_rangedWeapon.Shoot(Time.time, m_animator.getFacing());
         }
         //swing melee (right click)
-        else if(Input.GetMouseButtonDown(1) && !m_meleeAttack)
+        else if (Input.GetMouseButtonDown(1) && !m_meleeAttack)
         {
             m_meleeAttack = true;
             m_meleeTimer = Time.time + (m_meleeWeapon.attackDelay + m_meleeWeapon.attackDuration);
@@ -220,7 +267,7 @@ public class PlayerController : MonoBehaviour {
                 m_animator.setAnimation("Melee");
             }
         }
-        if(m_meleeAttack)
+        if (m_meleeAttack)
         {
             if (m_meleeTimer < Time.time)
             {

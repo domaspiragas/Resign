@@ -59,7 +59,7 @@ public class MeleeWeapon : MonoBehaviour
             m_previousAttackTime = Time.time;
             return true;
         }
-        else return false;
+        else { return false; }
 
     }
 
