@@ -86,7 +86,6 @@ public class PlayerController : MonoBehaviour
             HandleRoll();
             HandleAttack();
             HandleUsingStairway();
-            Debug.Log(m_touchingStairway);
         }
 
     }
