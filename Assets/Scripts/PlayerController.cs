@@ -211,6 +211,9 @@ public class PlayerController : MonoBehaviour
                     // TODO: Check for a better way to adjust crouching hitbox. This way is not too bad
                     this.transform.position = this.transform.position + new Vector3(0f, -.25f, 0f);
                     m_playerHitBox.size = new Vector2(.5f, .5f);
+                    //set the controller to know what size box to raycast from.
+                    m_controller.boxCollider = m_playerHitBox;
+                    m_controller.recalculateDistanceBetweenRays();
                 }
                 else if (m_isClimbing)
                 {
@@ -225,6 +228,9 @@ public class PlayerController : MonoBehaviour
                     // TODO: Check for a better way to adjust crouching hitbox. This way is not too bad
                     this.transform.position = this.transform.position + new Vector3(0f, .25f, 0f);
                     m_playerHitBox.size = new Vector2(.5f, 1f);
+                    //set the controller to know what size box to raycast from.
+                    m_controller.boxCollider = m_playerHitBox;
+                    m_controller.recalculateDistanceBetweenRays();
                 }
             }
             // climbing
