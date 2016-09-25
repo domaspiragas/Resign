@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour
     private AnimationController2D m_animator;
     // player's hitbox
     private BoxCollider2D m_playerHitBox;
+    //track players health inside class
+    private float m_playerHealth;
     //bools for player state
     private bool m_playerControl = true;
     private bool m_roll = false;
@@ -36,6 +38,8 @@ public class PlayerController : MonoBehaviour
     public GameObject rangedWeapon;
 
     /* ADJUSTABLE IN UNITY VALUES */
+
+    public float health = 100f;
     // movement
     public float movementSpeed = 6f;
     public float crouchMovementSpeed = 3f;
@@ -67,6 +71,7 @@ public class PlayerController : MonoBehaviour
         //attach camera and start following our player
         playerCamera.GetComponent<CameraFollow2D>().startCameraFollow(this.gameObject);
         m_rollCooldownTimestamp = Time.time;
+        m_playerHealth = health;
 
     }
 
@@ -87,6 +92,17 @@ public class PlayerController : MonoBehaviour
         if (col.tag == "Climbable")
         {
             m_touchingClimbable = true;
+        }
+        else if (col.tag == "EnemyProjectile" && !m_roll)
+        {
+            TakeDamage(col.gameObject.GetComponent<Projectile>().damage);
+            col.gameObject.GetComponent<Projectile>().Hit();
+            CheckIfShouldDie();
+        }
+        else if(col.tag == "Trap" && !m_roll)
+        {
+            TakeDamage(col.gameObject.GetComponent<Trap>().damage);
+            CheckIfShouldDie();
         }
     }
 
@@ -277,5 +293,18 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+    }
+    private void TakeDamage(float damage)
+    {
+        m_playerHealth -= damage;
+    }
+
+    private void CheckIfShouldDie()
+    {
+        if(m_playerHealth <= 0)
+        {
+            Destroy(gameObject);
+            // TODO: stuff when you've died
+        }
     }
 }

@@ -7,19 +7,22 @@ public class StationaryEnemy : MonoBehaviour
     public float health = 50;
     public GameObject rangedWeapon;
     private RangedWeapon m_rangedWeapon;
+
     private bool m_shooting = false;
+    private float m_health;
 
     private Vector3 m_playerPosition;
     // Use this for initialization
     void Start()
     {
         m_rangedWeapon = (RangedWeapon)rangedWeapon.GetComponent(typeof(RangedWeapon));
+        m_health = health;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (health <= 0)
+        if (m_health <= 0)
         {
             Destroy(gameObject);
         }
@@ -29,13 +32,22 @@ public class StationaryEnemy : MonoBehaviour
         }
     }
 
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if(col.tag == "Projectile")
+        {
+            TakeDamage(col.gameObject.GetComponent<Projectile>().damage);
+            col.gameObject.GetComponent<Projectile>().Hit();
+        }
+    }
+
     public void SetPlayerPosition(Vector3 position)
     {
         m_playerPosition = position;
     }
     public void TakeDamage(float damage)
     {
-        health -= damage;
+        m_health -= damage;
     }
     public void SetShooting(bool shooting)
     {
