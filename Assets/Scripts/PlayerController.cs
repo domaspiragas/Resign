@@ -93,15 +93,23 @@ public class PlayerController : MonoBehaviour
         {
             m_touchingClimbable = true;
         }
-        else if (col.tag == "EnemyProjectile" && !m_roll)
+        /* Section for taking Damage*/
+        if (!m_roll)
         {
-            TakeDamage(col.gameObject.GetComponent<Projectile>().damage);
-            col.gameObject.GetComponent<Projectile>().Hit();
-            CheckIfShouldDie();
-        }
-        else if(col.tag == "Trap" && !m_roll)
-        {
-            TakeDamage(col.gameObject.GetComponent<Trap>().damage);
+            if (col.tag == "EnemyProjectile")
+            {
+                TakeDamage(col.gameObject.GetComponent<Projectile>().damage);
+                col.gameObject.GetComponent<Projectile>().Hit();
+            }
+            else if (col.tag == "Trap")
+            {
+                TakeDamage(col.gameObject.GetComponent<Trap>().damage);
+            }
+            else if (col.tag == "EnemyWeapon")
+            {
+                TakeDamage(col.gameObject.GetComponent<MeleeWeapon>().damage);             
+            }
+            // after taking damage we need to know if we're dead.
             CheckIfShouldDie();
         }
     }
@@ -294,14 +302,14 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-    private void TakeDamage(float damage)
+    public void TakeDamage(float damage)
     {
         m_playerHealth -= damage;
     }
 
     private void CheckIfShouldDie()
     {
-        if(m_playerHealth <= 0)
+        if (m_playerHealth <= 0)
         {
             Destroy(gameObject);
             // TODO: stuff when you've died

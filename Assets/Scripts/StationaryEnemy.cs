@@ -32,15 +32,6 @@ public class StationaryEnemy : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter2D(Collider2D col)
-    {
-        if(col.tag == "Projectile")
-        {
-            TakeDamage(col.gameObject.GetComponent<Projectile>().damage);
-            col.gameObject.GetComponent<Projectile>().Hit();
-        }
-    }
-
     public void SetPlayerPosition(Vector3 position)
     {
         m_playerPosition = position;

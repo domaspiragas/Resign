@@ -8,6 +8,7 @@ public class Projectile : MonoBehaviour
 
     // tracks how long the bullet lives
     private float m_lifeTimer;
+
     void Start()
     {
         // initialize a time at which the bullet will get destroyed (now + lifespan)
@@ -24,6 +25,16 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
+        if(col.tag == "MovingEnemy")
+        {
+            col.gameObject.GetComponent<MovingEnemy>().TakeDamage(damage);
+            Hit();
+        }
+        else if (col.tag == "StationaryEnemy")
+        {
+            col.gameObject.GetComponent<StationaryEnemy>().TakeDamage(damage);
+            Hit();
+        }
         //TODO: If you hit an inanimate object, destroy projectile here.
     }
     public void Hit()

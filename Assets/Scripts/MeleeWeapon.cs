@@ -22,9 +22,14 @@ public class MeleeWeapon : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.tag == "Enemy")
+        if (col.tag == "StationaryEnemy")
         {
             col.gameObject.GetComponent<StationaryEnemy>().TakeDamage(damage);
+        }
+        else if(col.tag == "MovingEnemy")
+        {
+            Debug.Log("get here");
+            col.gameObject.GetComponentInParent<MovingEnemy>().TakeDamage(damage);
         }
     }
     void Start()
