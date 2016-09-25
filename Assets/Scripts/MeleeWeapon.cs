@@ -28,7 +28,6 @@ public class MeleeWeapon : MonoBehaviour
         }
         else if(col.tag == "MovingEnemy")
         {
-            Debug.Log("get here");
             col.gameObject.GetComponentInParent<MovingEnemy>().TakeDamage(damage);
         }
     }
