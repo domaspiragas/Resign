@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     private bool m_meleeAttack = false;
     private bool m_touchingClimbable = false;
     private bool m_isClimbing = false;
+    private bool m_touchingStairway = false;
 
     //melee animation timer
     private float m_meleeTimer = 0;
@@ -31,6 +32,7 @@ public class PlayerController : MonoBehaviour
     private float m_rollTimer = 0;
     private float m_rollCooldownTimestamp;
 
+    private Vector3 m_stairwayDestionation;
 
     //reference to the main camera
     public GameObject playerCamera;
@@ -83,6 +85,8 @@ public class PlayerController : MonoBehaviour
             PlayerMovement();
             HandleRoll();
             HandleAttack();
+            HandleUsingStairway();
+            Debug.Log(m_touchingStairway);
         }
 
     }
@@ -92,6 +96,11 @@ public class PlayerController : MonoBehaviour
         if (col.tag == "Climbable")
         {
             m_touchingClimbable = true;
+        }
+        else if (col.tag == "Stairway")
+        {
+            m_touchingStairway = true;
+            m_stairwayDestionation = col.gameObject.GetComponent<Stairway>().GetDestination();
         }
         /* Section for taking Damage*/
         if (!m_roll)
@@ -107,19 +116,30 @@ public class PlayerController : MonoBehaviour
             }
             else if (col.tag == "EnemyWeapon")
             {
-                TakeDamage(col.gameObject.GetComponent<MeleeWeapon>().damage);             
+                TakeDamage(col.gameObject.GetComponent<MeleeWeapon>().damage);
             }
             // after taking damage we need to know if we're dead.
             CheckIfShouldDie();
         }
     }
 
+    void OnTriggerStay2D(Collider2D col)
+    {
+        if (col.tag == "Stairway" && !m_touchingStairway)
+        {
+            m_touchingStairway = true;
+        }
+    }
     void OnTriggerExit2D(Collider2D col)
     {
         if (col.tag == "Climbable")
         {
             m_touchingClimbable = false;
             m_isClimbing = false;
+        }
+        else if (col.tag == "Stairway")
+        {
+            m_touchingStairway = false;
         }
     }
     // Handles the players movement (Left and Right).
@@ -301,6 +321,14 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+    }
+
+    private void HandleUsingStairway()
+    {
+        if (m_touchingStairway && Input.GetKeyDown(KeyCode.E))
+        {
+            this.transform.position = m_stairwayDestionation;
+        }
     }
     public void TakeDamage(float damage)
     {
