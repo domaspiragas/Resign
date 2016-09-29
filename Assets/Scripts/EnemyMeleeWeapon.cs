@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Prime31;
-public class MeleeWeapon : MonoBehaviour
 
-{
+public class EnemyMeleeWeapon : MonoBehaviour {
+
     public float damage;
     // how often player can press attack
     public float attackRate;
@@ -21,18 +20,6 @@ public class MeleeWeapon : MonoBehaviour
     private bool m_attacking = false;
     private Vector3 m_startingPosition;
 
-    void OnTriggerEnter2D(Collider2D col)
-    {
-        if (col.tag == "StationaryEnemy")
-        {
-            col.gameObject.GetComponent<StationaryEnemy>().TakeDamage(damage);
-        }
-        else if (col.tag == "MovingEnemy")
-        {
-            col.gameObject.GetComponentInParent<MovingEnemy>().TakeDamage(damage);
-        }
-    }
-
     void Start()
     {
         m_startingPosition = hitBox.transform.position;
@@ -44,24 +31,24 @@ public class MeleeWeapon : MonoBehaviour
     }
     void Update()
     {
-       
+
         if (m_attacking)
         {
             // if we're attacking start the timer for the attack delay
             m_attackDelay -= Time.deltaTime;
-            if(m_attackDelay <= 0)
+            if (m_attackDelay <= 0)
             {
                 // when the delay has passed, activate the hit box
                 hitBox.enabled = true;
                 //moves the hitbox around so that the OnTriggerEntered2D event is called. 
-                this.transform.Translate(new Vector3(0,.1f,0));
+                this.transform.Translate(new Vector3(0, .1f, 0));
                 this.transform.Translate(new Vector3(0, -.1f));
 
 
                 m_attackDuration -= Time.deltaTime;
                 if (m_attackDuration <= 0)
                 {
-                   // after the attack duration reset values for the next attack turn off hitbox.
+                    // after the attack duration reset values for the next attack turn off hitbox.
                     m_attacking = false;
                     m_attackDelay = attackDelay;
                     m_attackDuration = attackDuration;
@@ -82,6 +69,4 @@ public class MeleeWeapon : MonoBehaviour
         else { return false; }
 
     }
-
-
 }

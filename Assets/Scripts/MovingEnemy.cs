@@ -10,7 +10,7 @@ public class MovingEnemy : MonoBehaviour {
     public float speed = 2f;
     public GameObject meleeWeapon;
 
-    private MeleeWeapon m_meleeWeapon;
+    private EnemyMeleeWeapon m_meleeWeapon;
     private CharacterController2D m_controller;
     private AnimationController2D m_animator;
 
@@ -27,7 +27,7 @@ public class MovingEnemy : MonoBehaviour {
     {
         m_controller = gameObject.GetComponent<CharacterController2D>();
         m_animator = gameObject.GetComponent<AnimationController2D>();
-        m_meleeWeapon = (MeleeWeapon)meleeWeapon.GetComponent(typeof(MeleeWeapon));
+        m_meleeWeapon = (EnemyMeleeWeapon)meleeWeapon.GetComponent(typeof(EnemyMeleeWeapon));
         m_health = health;
         m_startingPosition = this.transform.position;
 	}

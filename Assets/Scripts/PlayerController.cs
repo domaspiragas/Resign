@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using Prime31;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,6 +11,8 @@ public class PlayerController : MonoBehaviour
     //TODO: Get rid of these and just use array index 0 for starter weapons
     private MeleeWeapon m_meleeWeapon;
     private RangedWeapon m_rangedWeapon;
+    //health ui
+    private GameObject m_healthUI;
     //object for raycasting
     private CharacterController2D m_controller;
     //object for animations
@@ -74,6 +78,8 @@ public class PlayerController : MonoBehaviour
         playerCamera.GetComponent<CameraFollow2D>().startCameraFollow(this.gameObject);
         m_rollCooldownTimestamp = Time.time;
         m_playerHealth = health;
+        //get the health ui object
+        m_healthUI = GameObject.Find("Health");
 
     }
 
@@ -115,7 +121,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (col.tag == "EnemyWeapon")
             {
-                TakeDamage(col.gameObject.GetComponent<MeleeWeapon>().damage);
+                TakeDamage(col.gameObject.GetComponent<EnemyMeleeWeapon>().damage);
             }
             // after taking damage we need to know if we're dead.
             CheckIfShouldDie();
@@ -338,6 +344,7 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(float damage)
     {
         m_playerHealth -= damage;
+        UpdateHealthUI();
     }
 
     private void CheckIfShouldDie()
@@ -345,7 +352,12 @@ public class PlayerController : MonoBehaviour
         if (m_playerHealth <= 0)
         {
             Destroy(gameObject);
+            SceneManager.LoadScene(0);
             // TODO: stuff when you've died
         }
+    }
+    private void UpdateHealthUI()
+    {
+        m_healthUI.GetComponent<Text>().text = "" + m_playerHealth;
     }
 }
