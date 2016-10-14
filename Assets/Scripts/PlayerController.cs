@@ -34,6 +34,7 @@ public class PlayerController : MonoBehaviour
     //roll cooldown
     private float m_rollTimer = 0;
     private float m_rollCooldownTimestamp;
+    private float m_rollCount = 3;
 
     private Vector3 m_stairwayDestionation;
 
@@ -90,6 +91,7 @@ public class PlayerController : MonoBehaviour
             HandleAttack();
             HandleUsingStairway();
         }
+        Debug.Log(m_rollCount);
 
     }
 
@@ -220,11 +222,90 @@ public class PlayerController : MonoBehaviour
     // Checks if player wants to roll, if so rolls
     private void HandleRoll()
     {
+        //// We only want to roll if we're on the ground, and there is no cooldown.
+        //if (Input.GetKeyDown(KeyCode.LeftShift) && m_controller.isGrounded && m_rollCooldownTimestamp < Time.time)
+        //{
+        //    m_roll = true;
+        //    m_rollCooldownTimestamp = Time.time + rollCooldown;
+        //}
+        //if (m_roll)
+        //{
+        //    Vector3 velocity = m_controller.velocity;
+        //    m_rollTimer += Time.deltaTime * rollTime;
+        //    if (m_animator.getFacing() == "Right")
+
+        //    {
+        //        velocity.x = rollSpeed;
+        //    }
+        //    else
+        //    {
+        //        velocity.x = -rollSpeed;
+        //    }
+
+        //    if (m_rollTimer > 1)
+        //    {
+        //        m_roll = false;
+        //        m_rollTimer = 0f;
+        //    }
+
+        //    m_animator.setAnimation("Roll");
+
+        //    //apply gravity
+        //    velocity.y += gravity * Time.deltaTime;
+
+        //    // perform movement
+        //    m_controller.move(velocity * Time.deltaTime);
+
+        //}
+        //// We only want to roll if we're on the ground, and there is no cooldown.
+        //if (Input.GetKeyDown(KeyCode.LeftShift) && m_controller.isGrounded && m_rollCooldownTimestamp < Time.time)
+        //{
+        //    m_roll = true;
+        //    m_rollCooldownTimestamp = Time.time + rollCooldown;
+        //}
+        //if (m_roll)
+        //{
+        //    Vector3 velocity = m_controller.velocity;
+        //    m_rollTimer += Time.deltaTime * rollTime;
+        //    if (m_animator.getFacing() == "Right")
+
+        //    {
+        //        velocity.x = rollSpeed;
+        //    }
+        //    else
+        //    {
+        //        velocity.x = -rollSpeed;
+        //    }
+
+        //    if (m_rollTimer > 1)
+        //    {
+        //        m_roll = false;
+        //        m_rollTimer = 0f;
+        //    }
+
+        //    m_animator.setAnimation("Roll");
+
+        //    //apply gravity
+        //    velocity.y += gravity * Time.deltaTime;
+
+        //    // perform movement
+        //    m_controller.move(velocity * Time.deltaTime);
+
+        //}
         // We only want to roll if we're on the ground, and there is no cooldown.
-        if (Input.GetKeyDown(KeyCode.LeftShift) && m_controller.isGrounded && m_rollCooldownTimestamp < Time.time)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && m_controller.isGrounded && m_rollCount > 0)
         {
             m_roll = true;
-            m_rollCooldownTimestamp = Time.time + rollCooldown;
+            m_rollCount--;
+            // We create a timer that will increment the roll count variable after (rollCooldown) seconds
+            // the timer then deletes itself once it has incremented the roll count.
+            // TODO: add GUI update.
+            System.Threading.Timer timer = null;
+            timer = new System.Threading.Timer((obj) =>
+            {
+                m_rollCount++;
+                timer.Dispose();
+            }, null, (int)(rollCooldown * 1000), System.Threading.Timeout.Infinite);
         }
         if (m_roll)
         {
