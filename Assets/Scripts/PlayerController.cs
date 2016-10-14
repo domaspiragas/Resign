@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
     //roll cooldown
     private float m_rollTimer = 0;
     private float m_rollCooldownTimestamp;
-    private float m_rollCount = 3;
+    private float m_rollCount;
 
     private Vector3 m_stairwayDestionation;
 
@@ -56,6 +56,7 @@ public class PlayerController : MonoBehaviour
     public float rollTime = 2f;
     public float rollSpeed = 0.5f;
     public float rollCooldown = 3f;
+    public int maxRollCount = 3;
 
     public float gravity = -30f;
 
@@ -76,8 +77,10 @@ public class PlayerController : MonoBehaviour
         playerCamera.GetComponent<CameraFollow2D>().startCameraFollow(this.gameObject);
         m_rollCooldownTimestamp = Time.time;
         m_playerHealth = health;
+        m_rollCount = maxRollCount;
         //get the health ui object
         m_healthUI = GameObject.Find("Health");
+
 
     }
 
@@ -222,90 +225,12 @@ public class PlayerController : MonoBehaviour
     // Checks if player wants to roll, if so rolls
     private void HandleRoll()
     {
-        //// We only want to roll if we're on the ground, and there is no cooldown.
-        //if (Input.GetKeyDown(KeyCode.LeftShift) && m_controller.isGrounded && m_rollCooldownTimestamp < Time.time)
-        //{
-        //    m_roll = true;
-        //    m_rollCooldownTimestamp = Time.time + rollCooldown;
-        //}
-        //if (m_roll)
-        //{
-        //    Vector3 velocity = m_controller.velocity;
-        //    m_rollTimer += Time.deltaTime * rollTime;
-        //    if (m_animator.getFacing() == "Right")
-
-        //    {
-        //        velocity.x = rollSpeed;
-        //    }
-        //    else
-        //    {
-        //        velocity.x = -rollSpeed;
-        //    }
-
-        //    if (m_rollTimer > 1)
-        //    {
-        //        m_roll = false;
-        //        m_rollTimer = 0f;
-        //    }
-
-        //    m_animator.setAnimation("Roll");
-
-        //    //apply gravity
-        //    velocity.y += gravity * Time.deltaTime;
-
-        //    // perform movement
-        //    m_controller.move(velocity * Time.deltaTime);
-
-        //}
-        //// We only want to roll if we're on the ground, and there is no cooldown.
-        //if (Input.GetKeyDown(KeyCode.LeftShift) && m_controller.isGrounded && m_rollCooldownTimestamp < Time.time)
-        //{
-        //    m_roll = true;
-        //    m_rollCooldownTimestamp = Time.time + rollCooldown;
-        //}
-        //if (m_roll)
-        //{
-        //    Vector3 velocity = m_controller.velocity;
-        //    m_rollTimer += Time.deltaTime * rollTime;
-        //    if (m_animator.getFacing() == "Right")
-
-        //    {
-        //        velocity.x = rollSpeed;
-        //    }
-        //    else
-        //    {
-        //        velocity.x = -rollSpeed;
-        //    }
-
-        //    if (m_rollTimer > 1)
-        //    {
-        //        m_roll = false;
-        //        m_rollTimer = 0f;
-        //    }
-
-        //    m_animator.setAnimation("Roll");
-
-        //    //apply gravity
-        //    velocity.y += gravity * Time.deltaTime;
-
-        //    // perform movement
-        //    m_controller.move(velocity * Time.deltaTime);
-
-        //}
         // We only want to roll if we're on the ground, and there is no cooldown.
-        if (Input.GetKeyDown(KeyCode.LeftShift) && m_controller.isGrounded && m_rollCount > 0)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && m_controller.isGrounded && m_rollCount > 0 && !m_roll)
         {
             m_roll = true;
             m_rollCount--;
-            // We create a timer that will increment the roll count variable after (rollCooldown) seconds
-            // the timer then deletes itself once it has incremented the roll count.
-            // TODO: add GUI update.
-            System.Threading.Timer timer = null;
-            timer = new System.Threading.Timer((obj) =>
-            {
-                m_rollCount++;
-                timer.Dispose();
-            }, null, (int)(rollCooldown * 1000), System.Threading.Timeout.Infinite);
+            m_rollCooldownTimestamp = Time.time + rollCooldown;
         }
         if (m_roll)
         {
@@ -335,6 +260,14 @@ public class PlayerController : MonoBehaviour
             // perform movement
             m_controller.move(velocity * Time.deltaTime);
 
+        }
+        if(Time.time >= m_rollCooldownTimestamp && m_rollCount < maxRollCount)
+        {
+            m_rollCount++;
+            if(m_rollCount < maxRollCount)
+            {
+                m_rollCooldownTimestamp = Time.time + rollCooldown;
+            }
         }
     }
 
