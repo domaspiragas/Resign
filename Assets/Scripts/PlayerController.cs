@@ -11,8 +11,9 @@ public class PlayerController : MonoBehaviour
     //TODO: Get rid of these and just use array index 0 for starter weapons
     private MeleeWeapon m_meleeWeapon;
     private RangedWeapon m_rangedWeapon;
-    //health ui
+    //health/roll ui
     private GameObject m_healthUI;
+    private GameObject m_rollUI;
     //object for raycasting
     private CharacterController2D m_controller;
     //object for animations
@@ -80,6 +81,7 @@ public class PlayerController : MonoBehaviour
         m_rollCount = maxRollCount;
         //get the health ui object
         m_healthUI = GameObject.Find("Health");
+        m_rollUI = GameObject.Find("RollCount");
 
 
     }
@@ -230,6 +232,7 @@ public class PlayerController : MonoBehaviour
         {
             m_roll = true;
             m_rollCount--;
+            UpdateRollUI();
             m_rollCooldownTimestamp = Time.time + rollCooldown;
         }
         if (m_roll)
@@ -264,6 +267,7 @@ public class PlayerController : MonoBehaviour
         if(Time.time >= m_rollCooldownTimestamp && m_rollCount < maxRollCount)
         {
             m_rollCount++;
+            UpdateRollUI();
             if(m_rollCount < maxRollCount)
             {
                 m_rollCooldownTimestamp = Time.time + rollCooldown;
@@ -325,5 +329,9 @@ public class PlayerController : MonoBehaviour
     private void UpdateHealthUI()
     {
         m_healthUI.GetComponent<Text>().text = "" + m_playerHealth;
+    }
+    private void UpdateRollUI()
+    {
+        m_rollUI.GetComponent<Text>().text = "" + m_rollCount;
     }
 }
