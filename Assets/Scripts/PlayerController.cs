@@ -24,7 +24,6 @@ public class PlayerController : MonoBehaviour
     //bools for player state
     private bool m_playerControl = true;
     private bool m_roll = false;
-    private bool m_crouch = false;
     private bool m_meleeAttack = false;
     private bool m_touchingClimbable = false;
     private bool m_isClimbing = false;
@@ -48,11 +47,9 @@ public class PlayerController : MonoBehaviour
     public float health = 100f;
     // movement
     public float movementSpeed = 6f;
-    public float crouchMovementSpeed = 3f;
 
     // jump
     public float jumpHeight = 2f;
-    public float crouchJumpHeight = 1f;
 
     // roll
     public float rollTime = 2f;
@@ -165,96 +162,51 @@ public class PlayerController : MonoBehaviour
             // D runs right
             if (Input.GetKey(KeyCode.D))
             {
-                // if we're not crouching move normal speed
-                if (!m_crouch)
-                {
-                    velocity.x = movementSpeed;
-                }
-                else
-                {
-                    velocity.x = crouchMovementSpeed;
-                }
+                velocity.x = movementSpeed;
                 //used to determine direction of animation, and roll
                 m_animator.setFacing("Right");
             }
             // A runs left
             else if (Input.GetKey(KeyCode.A))
             {
-                // if we're not crouching move normal speed
-                if (!m_crouch)
-                {
-                    velocity.x = -movementSpeed;
-                }
-                else
-                {
-                    velocity.x = -crouchMovementSpeed;
-                }
+
+
+                velocity.x = -movementSpeed;
+
                 //used to determine direction of animation, and roll
                 m_animator.setFacing("Left");
             }
             // Space Jumps if player is on the ground or is on a climbable object
             if (Input.GetKeyDown(KeyCode.Space) && (m_controller.isGrounded || m_isClimbing))
             {
-                // if we're not crouching jump normal height
-                if (!m_crouch)
-                {
-                    velocity.y = Mathf.Sqrt(2f * jumpHeight * -gravity);
-                    //jumping detaches us from climbable object.
-                    m_isClimbing = false;
-                }
-                else
-                {
-                    velocity.y = Mathf.Sqrt(2f * crouchJumpHeight * -gravity);
-                }
+                velocity.y = Mathf.Sqrt(2f * jumpHeight * -gravity);
+                //jumping detaches us from climbable object.
+                m_isClimbing = false;
             }
 
-            if (Input.GetKey(KeyCode.S))
+            if (Input.GetKey(KeyCode.S) && m_touchingClimbable)
             {
-                if (m_controller.isGrounded && !m_crouch)
+                if(!m_isClimbing)
                 {
-                    m_crouch = true;
-                    m_animator.setAnimation("Crouch");
-                    // TODO: Check for a better way to adjust crouching hitbox. This way is not too bad
-                    this.transform.position = this.transform.position + new Vector3(0f, -.25f, 0f);
-                    m_playerHitBox.size = new Vector2(.5f, .5f);
-                    //set the controller to know what size box to raycast from.
-                    m_controller.boxCollider = m_playerHitBox;
-                    m_controller.recalculateDistanceBetweenRays();
+                    m_isClimbing = true;
                 }
-                else if (m_isClimbing)
-                {
-                    velocity.y = -movementSpeed;
-                }
+                velocity.y = -movementSpeed;
+
             }
-            if (Input.GetKeyUp(KeyCode.S))
-            {
-                if (m_crouch)
-                {
-                    m_crouch = false;
-                    // TODO: Check for a better way to adjust crouching hitbox. This way is not too bad
-                    this.transform.position = this.transform.position + new Vector3(0f, .25f, 0f);
-                    m_playerHitBox.size = new Vector2(.5f, 1f);
-                    //set the controller to know what size box to raycast from.
-                    m_controller.boxCollider = m_playerHitBox;
-                    m_controller.recalculateDistanceBetweenRays();
-                }
-            }
+
             // climbing
             if (Input.GetKey(KeyCode.W) && m_touchingClimbable)
             {
-                m_isClimbing = true;
+                if (!m_isClimbing)
+                {
+                    m_isClimbing = true;
+                }
                 velocity.y = movementSpeed;
             }
 
             // idle animations
-            if (!m_crouch)
-            {
-                m_animator.setAnimation("Idle");
-            }
-            else
-            {
-                m_animator.setAnimation("Crouch");
-            }
+            m_animator.setAnimation("Idle");
+
         }
         //apply gravity if we're not climbing
         if (!m_isClimbing)
