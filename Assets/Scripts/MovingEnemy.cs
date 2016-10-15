@@ -2,13 +2,16 @@
 using System.Collections;
 using Prime31;
 
-public class MovingEnemy : MonoBehaviour {
+public class MovingEnemy : MonoBehaviour
+{
 
 
     public float health = 50f;
     public float patrolRange = 10;
     public float speed = 2f;
+    public float chanceOfHealthDrop = 15f;
     public GameObject meleeWeapon;
+    public GameObject healthPickUp;
 
     private EnemyMeleeWeapon m_meleeWeapon;
     private CharacterController2D m_controller;
@@ -23,18 +26,18 @@ public class MovingEnemy : MonoBehaviour {
 
     private float m_health;
     // Use this for initialization
-    void Start ()
+    void Start()
     {
         m_controller = gameObject.GetComponent<CharacterController2D>();
         m_animator = gameObject.GetComponent<AnimationController2D>();
         m_meleeWeapon = (EnemyMeleeWeapon)meleeWeapon.GetComponent(typeof(EnemyMeleeWeapon));
         m_health = health;
         m_startingPosition = this.transform.position;
-	}
+    }
 
 
     // Update is called once per frame
-    void Update ()
+    void Update()
     {
         CheckIfDead();
 
@@ -44,17 +47,17 @@ public class MovingEnemy : MonoBehaviour {
         if (!m_followPlayer)
         {
             m_animator.setAnimation("MovingEnemyIdle");
-            if(this.transform.position.x >= m_startingPosition.x + patrolRange && !m_meleeAttack)
+            if (this.transform.position.x >= m_startingPosition.x + patrolRange && !m_meleeAttack)
             {
                 m_moveRight = false;
                 m_animator.setFacing("Left");
             }
-            else if(this.transform.position.x <= m_startingPosition.x - patrolRange)
+            else if (this.transform.position.x <= m_startingPosition.x - patrolRange)
             {
                 m_moveRight = true;
                 m_animator.setFacing("Right");
             }
-            if(m_moveRight)
+            if (m_moveRight)
             {
                 velocity.x = speed;
 
@@ -118,7 +121,20 @@ public class MovingEnemy : MonoBehaviour {
     {
         if (m_health <= 0)
         {
+            if (healthPickUp != null)
+            {
+                DropHealth();
+            }
             Destroy(gameObject);
+        }
+    }
+    private void DropHealth()
+    {
+        // if we get a number within our percent drop we will spawn a health drop.
+        if (Random.Range(1, 101) <=  chanceOfHealthDrop)
+        {
+            GameObject healthDrop = (GameObject)Instantiate(healthPickUp, this.transform.position, Quaternion.identity);
+            healthDrop.gameObject.GetComponent<HealthPickUp>().AssignLobDirection(Random.Range(-.3f, .3f));
         }
     }
 }

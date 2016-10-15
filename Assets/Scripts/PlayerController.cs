@@ -22,13 +22,14 @@ public class PlayerController : MonoBehaviour
     private BoxCollider2D m_playerHitBox;
     //track players health inside class
     private float m_playerHealth;
+
     //bools for player state
     private bool m_playerControl = true;
     private bool m_roll = false;
     private bool m_meleeAttack = false;
     private bool m_touchingClimbable = false;
-    private bool m_isClimbing = false;
     private bool m_touchingStairway = false;
+    private bool m_isClimbing = false;
 
     //melee animation timer
     private float m_meleeTimer = 0;
@@ -46,7 +47,7 @@ public class PlayerController : MonoBehaviour
 
     /* ADJUSTABLE IN UNITY VALUES */
 
-    public float health = 100f;
+    public float maxHealth = 100f;
     // movement
     public float movementSpeed = 6f;
 
@@ -77,7 +78,7 @@ public class PlayerController : MonoBehaviour
         //attach camera and start following our player
         playerCamera.GetComponent<CameraFollow2D>().startCameraFollow(this.gameObject);
         m_rollCooldownTimestamp = Time.time;
-        m_playerHealth = health;
+        m_playerHealth = maxHealth;
         m_rollCount = maxRollCount;
         //get the health ui object
         m_healthUI = GameObject.Find("Health");
@@ -94,10 +95,8 @@ public class PlayerController : MonoBehaviour
             PlayerMovement();
             HandleRoll();
             HandleAttack();
-            HandleUsingStairway();
+            HandleInteract();
         }
-        Debug.Log(m_rollCount);
-
     }
 
     void OnTriggerEnter2D(Collider2D col)
@@ -110,6 +109,16 @@ public class PlayerController : MonoBehaviour
         {
             m_touchingStairway = true;
             m_stairwayDestionation = col.gameObject.GetComponent<Stairway>().GetDestination();
+        }
+        else if (col.tag == "HealthPickUp")
+        {
+            // if we are damaged pick up the health drop.
+            if(m_playerHealth < maxHealth)
+            {
+                PickUPHealth(col.gameObject.GetComponent<HealthPickUp>().healthValue);
+                col.gameObject.GetComponent<HealthPickUp>().PickUp();
+                UpdateHealthUI();
+            }
         }
         /* Section for taking Damage*/
         if (!m_roll)
@@ -304,12 +313,19 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void HandleUsingStairway()
+    
+    private void HandleInteract()
     {
-        if (m_touchingStairway && Input.GetKeyDown(KeyCode.E))
+        if(Input.GetKeyDown(KeyCode.F))
         {
-            this.transform.position = m_stairwayDestionation;
+            if (m_touchingStairway)
+            {
+                this.transform.position = m_stairwayDestionation;
+            }
+            //TODO: put the pickup weapons/loot chest stuff here.
         }
+
+
     }
     public void TakeDamage(float damage)
     {
@@ -317,6 +333,18 @@ public class PlayerController : MonoBehaviour
         UpdateHealthUI();
     }
 
+    public void PickUPHealth(float health)
+    {
+        // avoid getting more than max health
+        if(m_playerHealth + health > maxHealth)
+        {
+            m_playerHealth = maxHealth;
+        }
+        else
+        {
+            m_playerHealth += health;
+        }
+    }
     private void CheckIfShouldDie()
     {
         if (m_playerHealth <= 0)
