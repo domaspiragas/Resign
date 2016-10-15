@@ -195,7 +195,7 @@ public class PlayerController : MonoBehaviour
             // D runs right
             if (Input.GetKey(KeyCode.D))
             {
-                if (m_controller.isGrounded)
+                if (m_controller.isGrounded || m_isClimbing)
                 {
                     velocity.x = movementSpeed;
                 }
@@ -213,7 +213,7 @@ public class PlayerController : MonoBehaviour
             else if (Input.GetKey(KeyCode.A))
             {
 
-                if (m_controller.isGrounded)
+                if (m_controller.isGrounded || m_isClimbing)
                 {
                     velocity.x = -movementSpeed;
                 }
@@ -259,15 +259,14 @@ public class PlayerController : MonoBehaviour
 
             // idle animations
             m_animator.setAnimation("Idle");
-
+            //apply gravity if we're not climbing
+            if (!m_isClimbing)
+            {
+                velocity.y += gravity * Time.deltaTime;
+            }
+            // perform movement
+            m_controller.move(velocity * Time.deltaTime);
         }
-        //apply gravity if we're not climbing
-        if (!m_isClimbing)
-        {
-            velocity.y += gravity * Time.deltaTime;
-        }
-        // perform movement
-        m_controller.move(velocity * Time.deltaTime);
     }
 
     // Checks if player wants to roll, if so rolls
@@ -285,16 +284,20 @@ public class PlayerController : MonoBehaviour
         {
             Vector3 velocity = m_controller.velocity;
             m_rollTimer += Time.deltaTime * rollTime;
-            if (m_animator.getFacing() == "Right")
-
+            if (m_controller.isGrounded)
             {
-                velocity.x = rollSpeed;
-            }
-            else
-            {
-                velocity.x = -rollSpeed;
-            }
+                if (m_animator.getFacing() == "Right")
 
+                {
+                    velocity.x = rollSpeed;
+                }
+                else
+                {
+                    velocity.x = -rollSpeed;
+                }
+
+
+            }
             if (m_rollTimer > 1)
             {
                 m_roll = false;
@@ -303,9 +306,7 @@ public class PlayerController : MonoBehaviour
 
             m_animator.setAnimation("Roll");
 
-            //apply gravity
             velocity.y += gravity * Time.deltaTime;
-
             // perform movement
             m_controller.move(velocity * Time.deltaTime);
 
