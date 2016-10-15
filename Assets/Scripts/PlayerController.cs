@@ -54,6 +54,7 @@ public class PlayerController : MonoBehaviour
     public float maxHealth = 100f;
     // movement
     public float movementSpeed = 6f;
+    public float airMovementVal = 1f;
 
     // jump
     public float jumpHeight = 2f;
@@ -118,7 +119,7 @@ public class PlayerController : MonoBehaviour
         else if (col.tag == "HealthPickUp")
         {
             // if we are damaged pick up the health drop.
-            if(m_playerHealth < maxHealth)
+            if (m_playerHealth < maxHealth)
             {
                 PickUpHealth(col.gameObject.GetComponent<HealthPickUp>().healthValue);
                 col.gameObject.GetComponent<HealthPickUp>().PickUp();
@@ -179,7 +180,10 @@ public class PlayerController : MonoBehaviour
         //current velocity
         Vector3 velocity = m_controller.velocity;
         //elilminate horizontal sliding
-        velocity.x = 0;
+        if (m_controller.isGrounded || m_isClimbing)
+        {
+            velocity.x = 0;
+        }
         // if we're climbing eliminate vertical sliding
         if (m_isClimbing)
         {
@@ -191,7 +195,17 @@ public class PlayerController : MonoBehaviour
             // D runs right
             if (Input.GetKey(KeyCode.D))
             {
-                velocity.x = movementSpeed;
+                if (m_controller.isGrounded)
+                {
+                    velocity.x = movementSpeed;
+                }
+                else
+                {
+                    if (velocity.x < movementSpeed)
+                    {
+                        velocity.x += airMovementVal;
+                    }
+                }
                 //used to determine direction of animation, and roll
                 m_animator.setFacing("Right");
             }
@@ -199,8 +213,18 @@ public class PlayerController : MonoBehaviour
             else if (Input.GetKey(KeyCode.A))
             {
 
+                if (m_controller.isGrounded)
+                {
+                    velocity.x = -movementSpeed;
+                }
+                else
+                {
+                    if (velocity.x > -movementSpeed)
+                    {
+                        velocity.x -= airMovementVal;
 
-                velocity.x = -movementSpeed;
+                    }
+                }
 
                 //used to determine direction of animation, and roll
                 m_animator.setFacing("Left");
@@ -215,7 +239,7 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKey(KeyCode.S) && m_touchingClimbable)
             {
-                if(!m_isClimbing)
+                if (!m_isClimbing)
                 {
                     m_isClimbing = true;
                 }
@@ -286,11 +310,11 @@ public class PlayerController : MonoBehaviour
             m_controller.move(velocity * Time.deltaTime);
 
         }
-        if(Time.time >= m_rollCooldownTimestamp && m_rollCount < maxRollCount)
+        if (Time.time >= m_rollCooldownTimestamp && m_rollCount < maxRollCount)
         {
             m_rollCount++;
             UpdateRollUI();
-            if(m_rollCount < maxRollCount)
+            if (m_rollCount < maxRollCount)
             {
                 m_rollCooldownTimestamp = Time.time + rollCooldown;
             }
@@ -326,10 +350,10 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    
+
     private void HandleInteract()
     {
-        if(Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.F))
         {
             if (m_touchingStairway)
             {
@@ -349,7 +373,7 @@ public class PlayerController : MonoBehaviour
     public void PickUpHealth(float health)
     {
         // avoid getting more than max health
-        if(m_playerHealth + health > maxHealth)
+        if (m_playerHealth + health > maxHealth)
         {
             m_playerHealth = maxHealth;
         }
@@ -370,7 +394,7 @@ public class PlayerController : MonoBehaviour
         if (m_playerHealth <= 0)
         {
             m_lives--;
-            if(m_lives < 0)
+            if (m_lives < 0)
             {
                 //TODO: Game Over Screen
                 SceneManager.LoadScene(0);
