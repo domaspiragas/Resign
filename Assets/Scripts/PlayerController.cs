@@ -11,18 +11,22 @@ public class PlayerController : MonoBehaviour
     //TODO: Get rid of these and just use array index 0 for starter weapons
     private MeleeWeapon m_meleeWeapon;
     private RangedWeapon m_rangedWeapon;
-    //health/roll ui
+    //health/roll/lives ui
     private GameObject m_healthUI;
     private GameObject m_rollUI;
+    private GameObject m_livesUI;
     //object for raycasting
     private CharacterController2D m_controller;
     //object for animations
     private AnimationController2D m_animator;
     // player's hitbox
     private BoxCollider2D m_playerHitBox;
-    //track players health inside class
+    //track player's health inside class
     private float m_playerHealth;
-
+    //track player's lives inside class
+    private int m_lives = 3;
+    //current respawn point
+    private Vector3 m_respawnPoint;
     //bools for player state
     private bool m_playerControl = true;
     private bool m_roll = false;
@@ -83,6 +87,7 @@ public class PlayerController : MonoBehaviour
         //get the health ui object
         m_healthUI = GameObject.Find("Health");
         m_rollUI = GameObject.Find("RollCount");
+        m_livesUI = GameObject.Find("Lives");
 
 
     }
@@ -115,10 +120,18 @@ public class PlayerController : MonoBehaviour
             // if we are damaged pick up the health drop.
             if(m_playerHealth < maxHealth)
             {
-                PickUPHealth(col.gameObject.GetComponent<HealthPickUp>().healthValue);
+                PickUpHealth(col.gameObject.GetComponent<HealthPickUp>().healthValue);
                 col.gameObject.GetComponent<HealthPickUp>().PickUp();
-                UpdateHealthUI();
             }
+        }
+        else if (col.tag == "LifePickUp")
+        {
+            PickUpLife();
+            col.gameObject.GetComponent<LifePickUp>().PickUp();
+        }
+        else if (col.tag == "RespawnPoint")
+        {
+            m_respawnPoint = col.gameObject.GetComponent<RespawnPoint>().GetPosition();
         }
         /* Section for taking Damage*/
         if (!m_roll)
@@ -333,7 +346,7 @@ public class PlayerController : MonoBehaviour
         UpdateHealthUI();
     }
 
-    public void PickUPHealth(float health)
+    public void PickUpHealth(float health)
     {
         // avoid getting more than max health
         if(m_playerHealth + health > maxHealth)
@@ -344,15 +357,39 @@ public class PlayerController : MonoBehaviour
         {
             m_playerHealth += health;
         }
+        UpdateHealthUI();
     }
+    public void PickUpLife()
+    {
+        m_lives++;
+        UpdateLivesUI();
+    }
+
     private void CheckIfShouldDie()
     {
         if (m_playerHealth <= 0)
         {
-            Destroy(gameObject);
-            SceneManager.LoadScene(0);
+            m_lives--;
+            if(m_lives < 0)
+            {
+                //TODO: Game Over Screen
+                SceneManager.LoadScene(0);
+            }
+            else
+            {
+                RespawnPlayer();
+            }
+            //Destroy(gameObject);
+            //SceneManager.LoadScene(0);
             // TODO: stuff when you've died
         }
+    }
+    private void RespawnPlayer()
+    {
+        m_playerHealth = maxHealth;
+        UpdateHealthUI();
+        UpdateLivesUI();
+        this.transform.position = m_respawnPoint;
     }
     private void UpdateHealthUI()
     {
@@ -361,5 +398,9 @@ public class PlayerController : MonoBehaviour
     private void UpdateRollUI()
     {
         m_rollUI.GetComponent<Text>().text = "" + m_rollCount;
+    }
+    private void UpdateLivesUI()
+    {
+        m_livesUI.GetComponent<Text>().text = "x" + m_lives;
     }
 }
