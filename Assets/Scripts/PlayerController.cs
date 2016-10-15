@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
     private GameObject m_rollUI;
     private GameObject m_livesUI;
     //object for raycasting
-    private CharacterController2D m_controller;
+    private PlayerCharacterController2D m_controller;
     //object for animations
     private AnimationController2D m_animator;
     // player's hitbox
@@ -73,7 +73,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
 
-        m_controller = gameObject.GetComponent<CharacterController2D>();
+        m_controller = gameObject.GetComponent<PlayerCharacterController2D>();
         m_animator = gameObject.GetComponent<AnimationController2D>();
         m_playerHitBox = gameObject.GetComponent<BoxCollider2D>();
         //Initial weapons loaded in
@@ -402,5 +402,9 @@ public class PlayerController : MonoBehaviour
     private void UpdateLivesUI()
     {
         m_livesUI.GetComponent<Text>().text = "x" + m_lives;
+    }
+    public bool IsClimbing()
+    {
+        return m_isClimbing;
     }
 }
