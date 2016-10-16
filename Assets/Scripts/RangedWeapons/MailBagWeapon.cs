@@ -17,7 +17,7 @@ public class MailBagWeapon : MonoBehaviour {
 
     void Start()
     {
-        m_previousShotTime = Time.time;
+        m_previousShotTime = Time.time - attackRate;
     }
 
     // Gets the time the method was called, and the direction the character is facing

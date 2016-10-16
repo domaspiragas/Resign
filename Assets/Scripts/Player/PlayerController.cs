@@ -6,15 +6,28 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-
     // Weapons
-    //TODO: Get rid of these and just use array index 0 for starter weapons
+    //Melee
     private MeleeWeapon m_meleeWeapon;
-    private MailBagWeapon m_rangedWeapon;
+    //Ranged
+    private MailBagWeapon m_mailBagWeapon;
+    private RangedWeapon m_starterWeapon;
+
+    //Keep track of whether or not we own a weapon
+    private bool[] m_ownMeleeWeapon = { true, false, false, false };
+    private bool[] m_ownRangedWeapon = { true, true, false, false };
+    // Our current weapon
+    private int m_curMeleeWeapon = 0;
+    private int m_curRangedWeapon = 0;
+    // if true we're changing melee, if false we're changing ranged
+    private bool m_toggleMelee = false;
     //health/roll/lives ui
     private GameObject m_healthUI;
     private GameObject m_rollUI;
     private GameObject m_livesUI;
+    private GameObject m_toggleUI;
+    private GameObject m_meleeUI;
+    private GameObject m_rangedUI;
     //object for raycasting
     private PlayerCharacterController2D m_controller;
     //object for animations
@@ -44,6 +57,15 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 m_stairwayDestionation;
 
+    //Current Animations TODO: UPDATE TO real starting animation names
+    private string m_idleAnim = "Idle";
+    private string m_rollAnim = "Roll";
+    private string m_leftWalkAnim;
+    private string m_rightWalkAnim;
+    private string m_meleeAnim;
+    private string m_rangeAnim;
+    private string m_climbAnim;
+
     //reference to the main camera
     public GameObject playerCamera;
     public GameObject meleeWeapon;
@@ -67,8 +89,9 @@ public class PlayerController : MonoBehaviour
 
     public float gravity = -30f;
 
-    public MeleeWeapon[] meleeWeapons = new MeleeWeapon[5];
-    public RangedWeapon[] rangedWeapons = new RangedWeapon[5];
+    //All of the weapons
+    public GameObject[] meleeWeapons = new GameObject[4];
+    public GameObject[] rangedWeapons = new GameObject[4];
 
     // Use this for initialization
     void Start()
@@ -77,9 +100,12 @@ public class PlayerController : MonoBehaviour
         m_controller = gameObject.GetComponent<PlayerCharacterController2D>();
         m_animator = gameObject.GetComponent<AnimationController2D>();
         m_playerHitBox = gameObject.GetComponent<BoxCollider2D>();
-        //Initial weapons loaded in
-        m_rangedWeapon = (MailBagWeapon)rangedWeapon.GetComponent(typeof(MailBagWeapon));
+        // weapons loaded in
+        //melee
         m_meleeWeapon = (MeleeWeapon)meleeWeapon.GetComponent(typeof(MeleeWeapon));
+        //ranged
+        m_starterWeapon = (RangedWeapon)rangedWeapons[0].GetComponent(typeof(RangedWeapon));
+        m_mailBagWeapon = (MailBagWeapon)rangedWeapons[1].GetComponent(typeof(MailBagWeapon));
         //attach camera and start following our player
         playerCamera.GetComponent<CameraFollow2D>().startCameraFollow(this.gameObject);
         m_rollCooldownTimestamp = Time.time;
@@ -89,6 +115,9 @@ public class PlayerController : MonoBehaviour
         m_healthUI = GameObject.Find("Health");
         m_rollUI = GameObject.Find("RollCount");
         m_livesUI = GameObject.Find("Lives");
+        m_toggleUI = GameObject.Find("Toggle");
+        m_meleeUI = GameObject.Find("Melee");
+        m_rangedUI = GameObject.Find("Ranged");
 
 
     }
@@ -102,6 +131,15 @@ public class PlayerController : MonoBehaviour
             HandleRoll();
             HandleAttack();
             HandleInteract();
+            HandleToggleChangeWeapon();
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                ChangeWeapon(true);
+            }
+            else if(Input.GetKeyDown(KeyCode.Q))
+            {
+                ChangeWeapon(false);
+            }
         }
     }
 
@@ -260,7 +298,7 @@ public class PlayerController : MonoBehaviour
                 }
 
                 // idle animations
-                m_animator.setAnimation("Idle");
+                m_animator.setAnimation(m_idleAnim);
             }
             // Move while attacking in air.
             else
@@ -331,7 +369,7 @@ public class PlayerController : MonoBehaviour
                 m_rollTimer = 0f;
             }
 
-            m_animator.setAnimation("Roll");
+            m_animator.setAnimation(m_rollAnim);
 
             velocity.y += gravity * Time.deltaTime;
             // perform movement
@@ -357,7 +395,24 @@ public class PlayerController : MonoBehaviour
             //shoot ranged (left click)
             if (Input.GetMouseButton(0))
             {
-                m_rangedWeapon.Shoot(Time.time, m_animator.getFacing());
+                switch (m_curRangedWeapon)
+                {
+                    //Starter
+                    case 0:
+                        m_starterWeapon.Shoot(Time.time, m_animator.getFacing());
+                        break;
+                    //MailBag
+                    case 1:
+                        m_mailBagWeapon.Shoot(Time.time, m_animator.getFacing());
+                        break;
+                    //TBD
+                    case 2:
+                        break;
+                    //TBD
+                    case 3:
+                        break;
+                }
+                //  m_rangedWeapon.Shoot(Time.time, m_animator.getFacing());
             }
             //swing melee (right click)
             else if (Input.GetMouseButtonDown(1) && !m_meleeAttack)
@@ -375,7 +430,7 @@ public class PlayerController : MonoBehaviour
                 {
                     m_meleeAttack = false;
 
-                    m_animator.setAnimation("Idle");
+                    m_animator.setAnimation(m_idleAnim);
                 }
             }
         }
@@ -439,6 +494,138 @@ public class PlayerController : MonoBehaviour
             // TODO: stuff when you've died
         }
     }
+    // Swap from changing melee to changing ranged.
+    private void HandleToggleChangeWeapon()
+    {
+        if(Input.GetKeyDown(KeyCode.Tab))
+        {
+            m_toggleMelee = !m_toggleMelee;
+            UpdateToggleUI();
+        }
+    }
+    // The parameter determines whether you're cycling right or not through the list
+    private void ChangeWeapon(bool right)
+    {
+        // Change melee weapon
+        if (m_toggleMelee)
+        {
+            int temp = m_curMeleeWeapon;
+            if (right)
+            {
+                // Look for the next weapon we have to the right
+                while (!m_ownMeleeWeapon[temp + 1] && temp + 1 <= 3)
+                {
+                    if (temp + 1 == 3)
+                    {
+                        // if we're at the end with no weapon found we just equip the starting weapon
+                        m_curMeleeWeapon = 0;
+                        LoadWeapon(0);
+                        return;
+                    }
+                    temp++;
+                }
+                // Equip the new weapon
+                m_curMeleeWeapon = temp + 1;
+                LoadWeapon(temp + 1);
+            }
+            else
+            {
+                if (temp == 0)
+                {
+                    temp = 4;
+                }
+                // Look for the next weapon we have to the left
+                while (!m_ownMeleeWeapon[temp - 1] && temp - 1 >= 0)
+                {
+                    temp--;
+                }
+                m_curMeleeWeapon = temp - 1;
+                LoadWeapon(temp - 1);
+            }
+        }
+        //Change Ranged Weapon
+        else
+        {
+            int temp = m_curRangedWeapon;
+            if (right)
+            {
+                // Look for the next weapon we have to the right
+                while (!m_ownRangedWeapon[temp + 1] && temp + 1 <= 3)
+                {
+                    if (temp + 1 == 3)
+                    {
+                        // if we're at the end with no weapon found we just equip the starting weapon
+                        m_curRangedWeapon = 0;
+                        LoadWeapon(0);
+                        return;
+                    }
+                    temp++;
+                }
+                // Equip the new weapon
+                m_curRangedWeapon = temp + 1;
+
+                LoadWeapon(temp + 1);
+            }
+            else
+            {
+                if(temp == 0)
+                {
+                    temp = 4;
+                }
+                // Look for the next weapon we have to the left
+                while (!m_ownRangedWeapon[temp - 1] && temp - 1 >= 0)
+                {
+                    temp--;
+                }
+                m_curRangedWeapon = temp - 1;
+                LoadWeapon(temp - 1);
+            }
+        }
+    }
+    // For loading animations
+    private void LoadWeapon(int index)
+    {
+        // Change Melee Weapon
+        if (m_toggleMelee)
+        {
+            UpdateMeleeUI();
+            switch (index)
+            {
+                //ShoulderBag
+                case 0:
+                    break;
+                //Mop
+                case 1:
+                    break;
+                //TBD
+                case 2:
+                    break;
+                //Mouse
+                case 3:
+                    break;
+            }
+        }
+        //Change Ranged Weapon
+        else
+        {
+            UpdateRangedUI();
+            switch (index)
+            {
+                //Starter
+                case 0:
+                    break;
+                //MailBag
+                case 1:
+                    break;
+                //TBD
+                case 2:
+                    break;
+                //TBD
+                case 3:
+                    break;
+            }
+        }
+    }
     private void RespawnPlayer()
     {
         m_playerHealth = maxHealth;
@@ -457,6 +644,25 @@ public class PlayerController : MonoBehaviour
     private void UpdateLivesUI()
     {
         m_livesUI.GetComponent<Text>().text = "x" + m_lives;
+    }
+    private void UpdateRangedUI()
+    {
+        m_rangedUI.GetComponent<Text>().text = "R" + m_curRangedWeapon;
+    }
+    private void UpdateMeleeUI()
+    {
+        m_meleeUI.GetComponent<Text>().text = "M" + m_curMeleeWeapon;
+    }
+    private void UpdateToggleUI()
+    {
+        if(m_toggleMelee)
+        {
+            m_toggleUI.GetComponent<Text>().text = "M";
+        }
+        else
+        {
+            m_toggleUI.GetComponent<Text>().text = "R";
+        }
     }
     public bool IsClimbing()
     {
