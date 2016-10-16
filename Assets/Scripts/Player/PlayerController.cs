@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     // Weapons
     //TODO: Get rid of these and just use array index 0 for starter weapons
     private MeleeWeapon m_meleeWeapon;
-    private RangedWeapon m_rangedWeapon;
+    private MailBagWeapon m_rangedWeapon;
     //health/roll/lives ui
     private GameObject m_healthUI;
     private GameObject m_rollUI;
@@ -78,7 +78,7 @@ public class PlayerController : MonoBehaviour
         m_animator = gameObject.GetComponent<AnimationController2D>();
         m_playerHitBox = gameObject.GetComponent<BoxCollider2D>();
         //Initial weapons loaded in
-        m_rangedWeapon = (RangedWeapon)rangedWeapon.GetComponent(typeof(RangedWeapon));
+        m_rangedWeapon = (MailBagWeapon)rangedWeapon.GetComponent(typeof(MailBagWeapon));
         m_meleeWeapon = (MeleeWeapon)meleeWeapon.GetComponent(typeof(MeleeWeapon));
         //attach camera and start following our player
         playerCamera.GetComponent<CameraFollow2D>().startCameraFollow(this.gameObject);
@@ -190,75 +190,102 @@ public class PlayerController : MonoBehaviour
             velocity.y = 0;
         }
 
-        if (!m_roll && !m_meleeAttack)
+        if (!m_roll)
         {
-            // D runs right
-            if (Input.GetKey(KeyCode.D))
+            if (!m_meleeAttack)
             {
-                if (m_controller.isGrounded || m_isClimbing)
+                // D runs right
+                if (Input.GetKey(KeyCode.D))
                 {
-                    velocity.x = movementSpeed;
+                    if (m_controller.isGrounded || m_isClimbing)
+                    {
+                        velocity.x = movementSpeed;
+                    }
+                    else
+                    {
+                        if (velocity.x < movementSpeed)
+                        {
+                            velocity.x += airMovementVal;
+                        }
+                    }
+                    //used to determine direction of animation, and roll
+                    m_animator.setFacing("Right");
                 }
-                else
+                // A runs left
+                else if (Input.GetKey(KeyCode.A))
+                {
+
+                    if (m_controller.isGrounded || m_isClimbing)
+                    {
+                        velocity.x = -movementSpeed;
+                    }
+                    else
+                    {
+                        if (velocity.x > -movementSpeed)
+                        {
+                            velocity.x -= airMovementVal;
+
+                        }
+                    }
+
+                    //used to determine direction of animation, and roll
+                    m_animator.setFacing("Left");
+                }
+                // Space Jumps if player is on the ground or is on a climbable object
+                if (Input.GetKeyDown(KeyCode.Space) && (m_controller.isGrounded || m_isClimbing))
+                {
+                    velocity.y = Mathf.Sqrt(2f * jumpHeight * -gravity);
+                    //jumping detaches us from climbable object.
+                    m_isClimbing = false;
+                }
+
+                if (Input.GetKey(KeyCode.S) && m_touchingClimbable)
+                {
+                    if (!m_isClimbing)
+                    {
+                        m_isClimbing = true;
+                    }
+                    velocity.y = -movementSpeed;
+
+                }
+
+                // climbing
+                if (Input.GetKey(KeyCode.W) && m_touchingClimbable)
+                {
+                    if (!m_isClimbing)
+                    {
+                        m_isClimbing = true;
+                    }
+                    velocity.y = movementSpeed;
+                }
+
+                // idle animations
+                m_animator.setAnimation("Idle");
+            }
+            // Move while attacking in air.
+            else
+            {
+                // D runs right
+                if (Input.GetKey(KeyCode.D))
                 {
                     if (velocity.x < movementSpeed)
                     {
                         velocity.x += airMovementVal;
                     }
+                    //used to determine direction of animation, and roll
+                    m_animator.setFacing("Right");
                 }
-                //used to determine direction of animation, and roll
-                m_animator.setFacing("Right");
-            }
-            // A runs left
-            else if (Input.GetKey(KeyCode.A))
-            {
-
-                if (m_controller.isGrounded || m_isClimbing)
-                {
-                    velocity.x = -movementSpeed;
-                }
-                else
+                // A runs left
+                else if (Input.GetKey(KeyCode.A))
                 {
                     if (velocity.x > -movementSpeed)
                     {
                         velocity.x -= airMovementVal;
-
                     }
+                    //used to determine direction of animation, and roll
+                    m_animator.setFacing("Left");
                 }
-
-                //used to determine direction of animation, and roll
-                m_animator.setFacing("Left");
             }
-            // Space Jumps if player is on the ground or is on a climbable object
-            if (Input.GetKeyDown(KeyCode.Space) && (m_controller.isGrounded || m_isClimbing))
-            {
-                velocity.y = Mathf.Sqrt(2f * jumpHeight * -gravity);
-                //jumping detaches us from climbable object.
-                m_isClimbing = false;
-            }
-
-            if (Input.GetKey(KeyCode.S) && m_touchingClimbable)
-            {
-                if (!m_isClimbing)
-                {
-                    m_isClimbing = true;
-                }
-                velocity.y = -movementSpeed;
-
-            }
-
-            // climbing
-            if (Input.GetKey(KeyCode.W) && m_touchingClimbable)
-            {
-                if (!m_isClimbing)
-                {
-                    m_isClimbing = true;
-                }
-                velocity.y = movementSpeed;
-            }
-
-            // idle animations
-            m_animator.setAnimation("Idle");
             //apply gravity if we're not climbing
             if (!m_isClimbing)
             {
@@ -324,31 +351,34 @@ public class PlayerController : MonoBehaviour
 
     private void HandleAttack()
     {
-        //shoot ranged (left click)
-        if (Input.GetMouseButton(0))
+        // don't attack if we're rolling
+        if (!m_roll)
         {
-            m_rangedWeapon.Shoot(Time.time, m_animator.getFacing());
-        }
-        //swing melee (right click)
-        else if (Input.GetMouseButtonDown(1) && !m_meleeAttack)
-        {
-            m_meleeAttack = true;
-            m_meleeTimer = Time.time + (m_meleeWeapon.attackDelay + m_meleeWeapon.attackDuration);
-            if (m_meleeWeapon.Swing(Time.time))
+            //shoot ranged (left click)
+            if (Input.GetMouseButton(0))
             {
-                m_animator.setAnimation("Melee");
+                m_rangedWeapon.Shoot(Time.time, m_animator.getFacing());
+            }
+            //swing melee (right click)
+            else if (Input.GetMouseButtonDown(1) && !m_meleeAttack)
+            {
+                m_meleeAttack = true;
+                m_meleeTimer = Time.time + (m_meleeWeapon.attackDelay + m_meleeWeapon.attackDuration);
+                if (m_meleeWeapon.Swing(Time.time))
+                {
+                    m_animator.setAnimation("Melee");
+                }
+            }
+            if (m_meleeAttack)
+            {
+                if (m_meleeTimer < Time.time)
+                {
+                    m_meleeAttack = false;
+
+                    m_animator.setAnimation("Idle");
+                }
             }
         }
-        if (m_meleeAttack)
-        {
-            if (m_meleeTimer < Time.time)
-            {
-                m_meleeAttack = false;
-
-                m_animator.setAnimation("Idle");
-            }
-        }
-
     }
 
 
