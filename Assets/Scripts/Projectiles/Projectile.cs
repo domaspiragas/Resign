@@ -35,6 +35,10 @@ public class Projectile : MonoBehaviour
             col.gameObject.GetComponent<StationaryEnemy>().TakeDamage(damage);
             Hit();
         }
+        else if (col.tag == "PhysicalObject")
+        {
+            Hit();
+        }
         //TODO: If you hit an inanimate object, destroy projectile here.
     }
     public void Hit()

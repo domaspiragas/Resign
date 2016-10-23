@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MailBagProjectile : MonoBehaviour {
+public class EnemySingleProjectile : MonoBehaviour {
 
     public float damage;
     public float range = 1f;
@@ -25,25 +25,10 @@ public class MailBagProjectile : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.tag == "MovingEnemy")
-        {
-            col.gameObject.GetComponent<MovingEnemy>().TakeDamage(damage);
-            Hit();
-        }
-        else if (col.tag == "StationaryEnemy")
-        {
-            col.gameObject.GetComponent<StationaryEnemy>().TakeDamage(damage);
-            Hit();
-        }
-        else if (col.tag == "PhysicalObject")
+        if (col.tag == "PhysicalObject")
         {
             Hit();
         }
-        //if(col.tag == "CollidingEnvironment")
-        //{
-        //    Hit();
-        //}
-        //TODO: If you hit an inanimate object, destroy projectile here.
     }
     public void Hit()
     {
@@ -54,5 +39,4 @@ public class MailBagProjectile : MonoBehaviour {
     {
         return damage;
     }
-
 }

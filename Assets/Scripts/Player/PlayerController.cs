@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     private int m_curMeleeWeapon = 0;
     private int m_curRangedWeapon = 0;
     // if true we're changing melee, if false we're changing ranged
-    private bool m_toggleMelee = false;
+    private bool m_toggleMelee = true;
     //health/roll/lives ui
     private GameObject m_healthUI;
     private GameObject m_rollUI;
@@ -175,10 +175,10 @@ public class PlayerController : MonoBehaviour
         /* Section for taking Damage*/
         if (!m_roll)
         {
-            if (col.tag == "EnemyProjectile")
+            if (col.tag == "EnemySingleProjectile")
             {
-                TakeDamage(col.gameObject.GetComponent<Projectile>().damage);
-                col.gameObject.GetComponent<Projectile>().Hit();
+                TakeDamage(col.gameObject.GetComponent<EnemySingleProjectile>().damage);
+                col.gameObject.GetComponent<EnemySingleProjectile>().Hit();
             }
             else if (col.tag == "Trap")
             {
