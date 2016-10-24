@@ -35,15 +35,15 @@ public class MailBagProjectile : MonoBehaviour {
             col.gameObject.GetComponent<StationaryEnemy>().TakeDamage(damage);
             Hit();
         }
+        else if(col.tag == "RatEnemy")
+        {
+            col.gameObject.GetComponent<RatEnemy>().TakeDamage(damage);
+            Hit();
+        }
         else if (col.tag == "PhysicalObject")
         {
             Hit();
         }
-        //if(col.tag == "CollidingEnvironment")
-        //{
-        //    Hit();
-        //}
-        //TODO: If you hit an inanimate object, destroy projectile here.
     }
     public void Hit()
     {
