@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Prime31;
-public class MeleeWeapon : MonoBehaviour
 
-{
+public class StarterBagWeapon : MonoBehaviour {
+
     public float damage;
     // how often player can press attack
     public float attackRate;
@@ -39,7 +38,7 @@ public class MeleeWeapon : MonoBehaviour
         m_startingPosition = hitBox.transform.position;
         m_attackDuration = attackDuration;
         m_attackDelay = attackDelay;
-        m_previousAttackTime = Time.time;
+        m_previousAttackTime = Time.time - attackRate;
         hitBox.enabled = false;
 
     }
@@ -56,10 +55,10 @@ public class MeleeWeapon : MonoBehaviour
                 hitBox.enabled = true;
                 //moves the hitbox around so that the OnTriggerEntered2D event is called. 
                 Vector3 endPos = new Vector3(.75f, -.25f, 0);
-                this.transform.localPosition = Vector3.MoveTowards(this.transform.localPosition, endPos, 1.75f * Time.deltaTime);
-
-
+                // Third value is the speed at which the object moves
+                this.transform.localPosition = Vector3.MoveTowards(this.transform.localPosition, endPos, 2.25f * Time.deltaTime);
                 m_attackDuration -= Time.deltaTime;
+
                 if (m_attackDuration <= 0)
                 {
                     // after the attack duration reset values for the next attack turn off hitbox.

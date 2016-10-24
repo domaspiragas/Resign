@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 {
     // Weapons
     //Melee
-    private MeleeWeapon m_meleeWeapon;
+    private StarterBagWeapon m_starterBagWeapon;
     //Ranged
     private MailBagWeapon m_mailBagWeapon;
     private RangedWeapon m_starterWeapon;
@@ -102,7 +102,7 @@ public class PlayerController : MonoBehaviour
         m_playerHitBox = gameObject.GetComponent<BoxCollider2D>();
         // weapons loaded in
         //melee
-        m_meleeWeapon = (MeleeWeapon)meleeWeapon.GetComponent(typeof(MeleeWeapon));
+        m_starterBagWeapon = (StarterBagWeapon)meleeWeapon.GetComponent(typeof(StarterBagWeapon));
         //ranged
         m_starterWeapon = (RangedWeapon)rangedWeapons[0].GetComponent(typeof(RangedWeapon));
         m_mailBagWeapon = (MailBagWeapon)rangedWeapons[1].GetComponent(typeof(MailBagWeapon));
@@ -136,7 +136,7 @@ public class PlayerController : MonoBehaviour
             {
                 ChangeWeapon(true);
             }
-            else if(Input.GetKeyDown(KeyCode.Q))
+            else if (Input.GetKeyDown(KeyCode.Q))
             {
                 ChangeWeapon(false);
             }
@@ -301,7 +301,7 @@ public class PlayerController : MonoBehaviour
                 m_animator.setAnimation(m_idleAnim);
             }
             // Move while attacking in air.
-            else
+            else if (!m_controller.isGrounded)
             {
                 // D runs right
                 if (Input.GetKey(KeyCode.D))
@@ -405,7 +405,7 @@ public class PlayerController : MonoBehaviour
                     case 1:
                         m_mailBagWeapon.Shoot(Time.time, m_animator.getFacing());
                         break;
-                    //TBD
+                    //Samsung Galaxy Note7
                     case 2:
                         break;
                     //TBD
@@ -418,11 +418,28 @@ public class PlayerController : MonoBehaviour
             else if (Input.GetMouseButtonDown(1) && !m_meleeAttack)
             {
                 m_meleeAttack = true;
-                m_meleeTimer = Time.time + (m_meleeWeapon.attackDelay + m_meleeWeapon.attackDuration);
-                if (m_meleeWeapon.Swing(Time.time))
+                switch (m_curMeleeWeapon)
                 {
-                    m_animator.setAnimation("Melee");
+
+                    //Bag Weapon
+                    case 0:
+                        m_meleeTimer = Time.time + (m_starterBagWeapon.attackDelay + m_starterBagWeapon.attackDuration);
+                        if (m_starterBagWeapon.Swing(Time.time))
+                        {
+                            m_animator.setAnimation("Melee");
+                        }
+                        break;
+                    //Mop Weapon
+                    case 1:
+                        break;
+                    //Mouse Whip
+                    case 2:
+                        break;
+                    //TBD
+                    case 3:
+                        break;
                 }
+
             }
             if (m_meleeAttack)
             {
@@ -497,7 +514,7 @@ public class PlayerController : MonoBehaviour
     // Swap from changing melee to changing ranged.
     private void HandleToggleChangeWeapon()
     {
-        if(Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             m_toggleMelee = !m_toggleMelee;
             UpdateToggleUI();
@@ -568,7 +585,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                if(temp == 0)
+                if (temp == 0)
                 {
                     temp = 4;
                 }
@@ -655,7 +672,7 @@ public class PlayerController : MonoBehaviour
     }
     private void UpdateToggleUI()
     {
-        if(m_toggleMelee)
+        if (m_toggleMelee)
         {
             m_toggleUI.GetComponent<Text>().text = "M";
         }
