@@ -169,19 +169,26 @@ public class PlayerController : MonoBehaviour
         /* Section for taking Damage*/
         if (!m_roll)
         {
+            //take intern damage
             if (col.tag == "InternEnemyProjectile")
             {
                 TakeDamage(col.gameObject.GetComponent<InternEnemyProjectile>().damage);
                 col.gameObject.GetComponent<InternEnemyProjectile>().Hit();
             }
-            else if (col.tag == "Trap")
-            {
-                TakeDamage(col.gameObject.GetComponent<Trap>().damage);
-            }
             else if (col.tag == "InternMeleeWeapon")
             {
                 TakeDamage(col.gameObject.GetComponent<InternMeleeWeapon>().damage);
             }
+            // take rat damage
+            else if (col.tag == "RatMeleeWeapon")
+            {
+                TakeDamage(col.gameObject.GetComponent<RatMeleeWeapon>().damage);
+            }
+            else if (col.tag == "Trap")
+            {
+                TakeDamage(col.gameObject.GetComponent<Trap>().damage);
+            }
+
             // after taking damage we need to know if we're dead.
             CheckIfShouldDie();
         }

@@ -15,7 +15,7 @@ public class RatEnemy : MonoBehaviour {
     public GameObject meleeWeapon;
     public GameObject healthPickUp;
 
-    private EnemyMeleeWeapon m_meleeWeapon;
+    private RatMeleeWeapon m_meleeWeapon;
     private CharacterController2D m_controller;
     private AnimationController2D m_animator;
 
@@ -32,7 +32,7 @@ public class RatEnemy : MonoBehaviour {
     {
         m_controller = gameObject.GetComponent<CharacterController2D>();
         m_animator = gameObject.GetComponent<AnimationController2D>();
-        m_meleeWeapon = (EnemyMeleeWeapon)meleeWeapon.GetComponent(typeof(EnemyMeleeWeapon));
+        m_meleeWeapon = (RatMeleeWeapon)meleeWeapon.GetComponent(typeof(RatMeleeWeapon));
         m_health = health;
         m_startingPosition = this.transform.position;
     }
