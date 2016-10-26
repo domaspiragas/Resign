@@ -190,6 +190,17 @@ public class PlayerController : MonoBehaviour
                 TakeDamage(col.gameObject.GetComponent<MailmanEnemyProjectile>().damage);
                 col.gameObject.GetComponent<MailmanEnemyProjectile>().Hit();
             }
+            // take mailman mini boss damage
+            else if (col.tag == "PackageProjectile")
+            {
+                TakeDamage(col.gameObject.GetComponent<PackageProjectile>().damage);
+                col.gameObject.GetComponent<PackageProjectile>().Hit();
+            }
+            else if (col.tag == "MailmanMiniBossBagProjectile")
+            {
+                TakeDamage(col.gameObject.GetComponent<MailmanMiniBossBagProjectile>().damage);
+                col.gameObject.GetComponent<MailmanMiniBossBagProjectile>().Hit();
+            }
             else if (col.tag == "Trap")
             {
                 TakeDamage(col.gameObject.GetComponent<Trap>().damage);

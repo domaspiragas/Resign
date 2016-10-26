@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MovingEnemyPlayerDetection : MonoBehaviour
-{
+public class MailmanMiniBossDetection : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D col)
     {

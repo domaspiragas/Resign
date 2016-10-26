@@ -57,6 +57,10 @@ public class MopWeapon : MonoBehaviour
                 col.gameObject.GetComponent<MailmanEnemy>().SetPushedBack();
             }
         }
+        else if (col.tag == "MailmanMiniBoss")
+        {
+            col.gameObject.GetComponent<MailmanMiniBoss>().TakeDamage(damage);
+        }
     }
 
     void Start()
