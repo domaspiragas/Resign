@@ -9,12 +9,13 @@ public class PlayerController : MonoBehaviour
     // Weapons
     //Melee
     private StarterBagWeapon m_starterBagWeapon;
+    private MopWeapon m_mopWeapon;
     //Ranged
     private MailBagWeapon m_mailBagWeapon;
     private RangedWeapon m_starterWeapon;
 
     //Keep track of whether or not we own a weapon
-    private bool[] m_ownMeleeWeapon = { true, false, false, false };
+    private bool[] m_ownMeleeWeapon = { true, true, false, false };
     private bool[] m_ownRangedWeapon = { true, true, false, false };
     // Our current weapon
     private int m_curMeleeWeapon = 0;
@@ -102,7 +103,8 @@ public class PlayerController : MonoBehaviour
         m_playerHitBox = gameObject.GetComponent<BoxCollider2D>();
         // weapons loaded in
         //melee
-        m_starterBagWeapon = (StarterBagWeapon)meleeWeapon.GetComponent(typeof(StarterBagWeapon));
+        m_starterBagWeapon = (StarterBagWeapon)meleeWeapons[0].GetComponent(typeof(StarterBagWeapon));
+        m_mopWeapon = (MopWeapon)meleeWeapons[1].GetComponent(typeof(MopWeapon));
         //ranged
         m_starterWeapon = (RangedWeapon)rangedWeapons[0].GetComponent(typeof(RangedWeapon));
         m_mailBagWeapon = (MailBagWeapon)rangedWeapons[1].GetComponent(typeof(MailBagWeapon));
@@ -431,6 +433,11 @@ public class PlayerController : MonoBehaviour
                         break;
                     //Mop Weapon
                     case 1:
+                        m_meleeTimer = Time.time + (m_mopWeapon.attackDelay + m_mopWeapon.attackDuration);
+                        if (m_mopWeapon.Swing(Time.time))
+                        {
+                            m_animator.setAnimation("Melee");
+                        }
                         break;
                     //Mouse Whip
                     case 2:

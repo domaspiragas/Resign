@@ -10,6 +10,8 @@ public class MovingEnemy : MonoBehaviour
     public float patrolRange = 10;
     public float speed = 2f;
     public float chanceOfHealthDrop = 15f;
+    public float pushbackDistance = .2f;
+    public float pushbackSpeed =  10;
     public GameObject meleeWeapon;
     public GameObject healthPickUp;
 
@@ -22,7 +24,10 @@ public class MovingEnemy : MonoBehaviour
     private Vector3 m_playerPosition;
     private bool m_moveRight;
     private bool m_meleeAttack = false;
+    private bool m_pushedBack = false;
     private float m_meleeTimer;
+    private float m_pushbackTimer;
+    
 
     private float m_health;
     // Use this for initialization
@@ -44,7 +49,7 @@ public class MovingEnemy : MonoBehaviour
         Vector3 velocity = m_controller.velocity;
         velocity.x = 0;
         // Patrols left and right patrolRange distance
-        if (!m_followPlayer)
+        if (!m_followPlayer && !m_pushedBack)
         {
             m_animator.setAnimation("MovingEnemyIdle");
             if (this.transform.position.x >= m_startingPosition.x + patrolRange && !m_meleeAttack)
@@ -67,10 +72,11 @@ public class MovingEnemy : MonoBehaviour
                 velocity.x = -speed;
             }
         }
-        else if (!m_meleeAttack && m_followPlayer)
+        else if (!m_meleeAttack && m_followPlayer &&!m_pushedBack)
         {
             float positionDifference = this.transform.position.x - m_playerPosition.x;
 
+            // our position - palyer position, if positive we're to the right of the palyer else we're to the left
             if (positionDifference > 0 && positionDifference > 1.5f)
             {
                 velocity.x = -speed;
@@ -90,6 +96,23 @@ public class MovingEnemy : MonoBehaviour
                     m_animator.setAnimation("MovingEnemyMelee");
                 }
             }
+        }
+        else if (m_pushedBack)
+        {
+            float positionDifference = this.transform.position.x - m_playerPosition.x;
+            // if the enemy is to the right of the player get pushed further right, else pushed left
+            if(positionDifference > 0)
+            {
+                velocity.x = pushbackSpeed;
+            }
+            else
+            {
+                velocity.x = -pushbackSpeed;
+            }
+        }
+        if(m_pushbackTimer < Time.time)
+        {
+            m_pushedBack = false;
         }
         if (m_meleeAttack)
         {
@@ -136,5 +159,15 @@ public class MovingEnemy : MonoBehaviour
             GameObject healthDrop = (GameObject)Instantiate(healthPickUp, this.transform.position, Quaternion.identity);
             healthDrop.gameObject.GetComponent<HealthPickUp>().AssignLobDirection(Random.Range(-.3f, .3f));
         }
+    }
+    public void SetPushedBack()
+    {
+        m_pushedBack = true;
+        // start the pushback timer
+        m_pushbackTimer = Time.time + pushbackDistance;
+    }
+    public bool GetPushedBack()
+    {
+        return m_pushedBack;
     }
 }

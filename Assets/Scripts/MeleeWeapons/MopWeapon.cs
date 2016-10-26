@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Prime31;
-public class MeleeWeapon : MonoBehaviour
 
-{
+public class MopWeapon : MonoBehaviour {
+
     public float damage;
     // how often player can press attack
     public float attackRate;
@@ -31,6 +30,10 @@ public class MeleeWeapon : MonoBehaviour
         else if (col.tag == "MovingEnemy")
         {
             col.gameObject.GetComponentInParent<MovingEnemy>().TakeDamage(damage);
+            if (!col.gameObject.GetComponent<MovingEnemy>().GetPushedBack())
+            {
+                col.gameObject.GetComponentInParent<MovingEnemy>().SetPushedBack();
+            }
         }
     }
 
@@ -56,7 +59,7 @@ public class MeleeWeapon : MonoBehaviour
                 hitBox.enabled = true;
                 //moves the hitbox around so that the OnTriggerEntered2D event is called. 
                 Vector3 endPos = new Vector3(1f, .1f, 0);
-                this.transform.localPosition = Vector3.MoveTowards(this.transform.localPosition, endPos, 1.75f * Time.deltaTime);
+                this.transform.localPosition = Vector3.MoveTowards(this.transform.localPosition, endPos, 3f * Time.deltaTime);
 
 
                 m_attackDuration -= Time.deltaTime;
@@ -84,6 +87,4 @@ public class MeleeWeapon : MonoBehaviour
         else { return false; }
 
     }
-
-
 }

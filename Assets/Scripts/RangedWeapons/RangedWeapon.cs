@@ -23,7 +23,6 @@ public class RangedWeapon : MonoBehaviour
     {
         if (currentTime - m_previousShotTime > attackRate)
         {
-            Debug.Log("Inside");
             GameObject projectile = (GameObject)Instantiate(projectilePrefab, this.transform.position, Quaternion.identity);
             if (direction == "Right")
             {
