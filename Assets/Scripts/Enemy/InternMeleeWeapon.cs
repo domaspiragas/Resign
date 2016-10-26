@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MopWeapon : MonoBehaviour
-{
+public class InternMeleeWeapon : MonoBehaviour {
 
     public float damage;
     // how often player can press attack
@@ -20,31 +19,6 @@ public class MopWeapon : MonoBehaviour
     private float m_attackDuration;
     private bool m_attacking = false;
     private Vector3 m_startingPosition;
-
-    void OnTriggerEnter2D(Collider2D col)
-    {
-        // Have to add all enemies here
-        if (col.tag == "StationaryEnemy")
-        {
-            col.gameObject.GetComponent<StationaryEnemy>().TakeDamage(damage);
-        }
-        else if (col.tag == "MovingEnemy")
-        {
-            col.gameObject.GetComponent<MovingEnemy>().TakeDamage(damage);
-            if (!col.gameObject.GetComponent<MovingEnemy>().GetPushedBack())
-            {
-                col.gameObject.GetComponent<MovingEnemy>().SetPushedBack();
-            }
-        }
-        else if (col.tag == "InternEnemy")
-        {
-            col.gameObject.GetComponent<InternEnemy>().TakeDamage(damage);
-            if (!col.gameObject.GetComponent<InternEnemy>().GetPushedBack())
-            {
-                col.gameObject.GetComponent<InternEnemy>().SetPushedBack();
-            }
-        }
-    }
 
     void Start()
     {
@@ -67,15 +41,14 @@ public class MopWeapon : MonoBehaviour
                 // when the delay has passed, activate the hit box
                 hitBox.enabled = true;
                 //moves the hitbox around so that the OnTriggerEntered2D event is called. 
-                Vector3 endPos = new Vector3(1f, .1f, 0);
-                this.transform.localPosition = Vector3.MoveTowards(this.transform.localPosition, endPos, 3f * Time.deltaTime);
+                this.transform.Translate(new Vector3(0, .1f, 0));
+                this.transform.Translate(new Vector3(0, -.1f));
 
 
                 m_attackDuration -= Time.deltaTime;
                 if (m_attackDuration <= 0)
                 {
                     // after the attack duration reset values for the next attack turn off hitbox.
-                    this.transform.localPosition = new Vector3(.35f, .1f, 0);
                     m_attacking = false;
                     m_attackDelay = attackDelay;
                     m_attackDuration = attackDuration;
@@ -85,15 +58,26 @@ public class MopWeapon : MonoBehaviour
         }
     }
     // if successful return true, if not return false
-    public bool Swing(float currentTime)
+    public void Swing(float currentTime)
     {
         if (currentTime - m_previousAttackTime > attackRate + attackDelay)
         {
             m_attacking = true;
             m_previousAttackTime = Time.time;
+
+        }
+
+    }
+    public bool OnCoolDown(float currentTime)
+    {
+        // if the cooldown has expired return false
+        if (currentTime - m_previousAttackTime > attackRate + attackDelay)
+        {
+            return false;
+        }
+        else
+        {
             return true;
         }
-        else { return false; }
-
     }
 }

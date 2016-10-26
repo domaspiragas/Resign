@@ -35,6 +35,10 @@ public class StarterBagWeapon : MonoBehaviour {
         {
             col.gameObject.GetComponent<RatEnemy>().TakeDamage(damage);
         }
+        else if (col.tag == "InternEnemy")
+        {
+            col.gameObject.GetComponent<InternEnemy>().TakeDamage(damage);
+        }
     }
 
     void Start()

@@ -121,7 +121,6 @@ public class PlayerController : MonoBehaviour
         m_meleeUI = GameObject.Find("Melee");
         m_rangedUI = GameObject.Find("Ranged");
 
-
     }
 
     // Update is called once per frame
@@ -134,14 +133,7 @@ public class PlayerController : MonoBehaviour
             HandleAttack();
             HandleInteract();
             HandleToggleChangeWeapon();
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                ChangeWeapon(true);
-            }
-            else if (Input.GetKeyDown(KeyCode.Q))
-            {
-                ChangeWeapon(false);
-            }
+            HandleChangeWeapon();
         }
     }
 
@@ -177,18 +169,18 @@ public class PlayerController : MonoBehaviour
         /* Section for taking Damage*/
         if (!m_roll)
         {
-            if (col.tag == "EnemySingleProjectile")
+            if (col.tag == "InternEnemyProjectile")
             {
-                TakeDamage(col.gameObject.GetComponent<EnemySingleProjectile>().damage);
-                col.gameObject.GetComponent<EnemySingleProjectile>().Hit();
+                TakeDamage(col.gameObject.GetComponent<InternEnemyProjectile>().damage);
+                col.gameObject.GetComponent<InternEnemyProjectile>().Hit();
             }
             else if (col.tag == "Trap")
             {
                 TakeDamage(col.gameObject.GetComponent<Trap>().damage);
             }
-            else if (col.tag == "EnemyWeapon")
+            else if (col.tag == "InternMeleeWeapon")
             {
-                TakeDamage(col.gameObject.GetComponent<EnemyMeleeWeapon>().damage);
+                TakeDamage(col.gameObject.GetComponent<InternMeleeWeapon>().damage);
             }
             // after taking damage we need to know if we're dead.
             CheckIfShouldDie();
@@ -527,6 +519,17 @@ public class PlayerController : MonoBehaviour
             UpdateToggleUI();
         }
     }
+    private void HandleChangeWeapon()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            ChangeWeapon(true);
+        }
+        else if (Input.GetKeyDown(KeyCode.Q))
+        {
+            ChangeWeapon(false);
+        }
+    }
     // The parameter determines whether you're cycling right or not through the list
     private void ChangeWeapon(bool right)
     {
@@ -650,6 +653,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
     private void RespawnPlayer()
     {
         m_playerHealth = maxHealth;
