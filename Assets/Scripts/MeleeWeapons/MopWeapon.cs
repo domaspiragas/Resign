@@ -44,6 +44,19 @@ public class MopWeapon : MonoBehaviour
                 col.gameObject.GetComponent<InternEnemy>().SetPushedBack();
             }
         }
+        else if (col.tag == "RatEnemy")
+        {
+            //TODO: Maybe add pushback to rat
+            col.gameObject.GetComponent<RatEnemy>().TakeDamage(damage);
+        }
+        else if (col.tag == "MailmanEnenmy")
+        {
+            col.gameObject.GetComponent<MailmanEnemy>().TakeDamage(damage);
+            if (!col.gameObject.GetComponent<MailmanEnemy>().GetPushedBack())
+            {
+                col.gameObject.GetComponent<MailmanEnemy>().SetPushedBack();
+            }
+        }
     }
 
     void Start()

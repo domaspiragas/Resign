@@ -40,6 +40,16 @@ public class MailBagProjectile : MonoBehaviour {
             col.gameObject.GetComponent<RatEnemy>().TakeDamage(damage);
             Hit();
         }
+        else if (col.tag == "InternEnemy")
+        {
+            col.gameObject.GetComponent<InternEnemy>().TakeDamage(damage);
+            Hit();
+        }
+        else if (col.tag == "MailmanEnemy")
+        {
+            col.gameObject.GetComponent<MailmanEnemy>().TakeDamage(damage);
+            Hit();
+        }
         else if (col.tag == "PhysicalObject")
         {
             Hit();

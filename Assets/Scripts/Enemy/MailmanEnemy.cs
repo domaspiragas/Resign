@@ -2,20 +2,18 @@
 using System.Collections;
 using Prime31;
 
-public class InternEnemy : MonoBehaviour
-{
+public class MailmanEnemy : MonoBehaviour {
+
     public float health = 50f;
     public float patrolRange = 10;
     public float speed = 2f;
     public float chanceOfHealthDrop = 15f;
     public float pushbackDistance = .2f;
     public float pushbackSpeed = 10;
-    public GameObject meleeWeapon;
     public GameObject rangedWeapon;
     public GameObject healthPickUp;
 
-    private InternMeleeWeapon m_meleeWeapon;
-    private InternRangedWeapon m_rangedWeapon;
+    private MailmanRangedWeapon m_rangedWeapon;
     private CharacterController2D m_controller;
     private AnimationController2D m_animator;
 
@@ -23,9 +21,7 @@ public class InternEnemy : MonoBehaviour
     private Vector3 m_startingPosition;
     private Vector3 m_playerPosition;
     private bool m_moveRight;
-    private bool m_meleeAttack = false;
     private bool m_pushedBack = false;
-    private float m_meleeTimer;
     private float m_pushbackTimer;
 
 
@@ -35,8 +31,7 @@ public class InternEnemy : MonoBehaviour
     {
         m_controller = gameObject.GetComponent<CharacterController2D>();
         m_animator = gameObject.GetComponent<AnimationController2D>();
-        m_meleeWeapon = (InternMeleeWeapon)meleeWeapon.GetComponent(typeof(InternMeleeWeapon));
-        m_rangedWeapon = (InternRangedWeapon)rangedWeapon.GetComponent(typeof(InternRangedWeapon));
+        m_rangedWeapon = (MailmanRangedWeapon)rangedWeapon.GetComponent(typeof(MailmanRangedWeapon));
         m_health = health;
         m_startingPosition = this.transform.position;
     }
@@ -53,7 +48,7 @@ public class InternEnemy : MonoBehaviour
         if (!m_followPlayer && !m_pushedBack)
         {
             m_animator.setAnimation("MovingEnemyIdle");
-            if (this.transform.position.x >= m_startingPosition.x + patrolRange && !m_meleeAttack)
+            if (this.transform.position.x >= m_startingPosition.x + patrolRange)
             {
                 m_moveRight = false;
                 m_animator.setFacing("Left");
@@ -73,53 +68,47 @@ public class InternEnemy : MonoBehaviour
                 velocity.x = -speed;
             }
         }
-        else if (!m_meleeAttack && m_followPlayer && !m_pushedBack)
+        else if (m_followPlayer && !m_pushedBack)
         {
             float positionDifference = this.transform.position.x - m_playerPosition.x;
 
             // our position - palyer position, if positive we're to the right of the palyer else we're to the left
             // if the player is farther away ranged attack
-            if (positionDifference > 1.5f && positionDifference < 8f)
+            if (positionDifference > 8f && positionDifference < 13f)
             {
 
                 m_animator.setFacing("Left");
-                // overlap the melee cooldown with ranged cooldown so you don't get shot immediately after running away.
-                if (!m_meleeWeapon.OnCoolDown(Time.time))
-                {
-                    m_rangedWeapon.EnemyShoot(Time.time, m_playerPosition);
-                }
+                m_rangedWeapon.EnemyShoot(Time.time, m_playerPosition);            
             }
-            else if (positionDifference < -1.5f && positionDifference > -8f)
+            else if (positionDifference < -8f && positionDifference > -13f)
             {
                 m_animator.setFacing("Right");
-                if (!m_meleeWeapon.OnCoolDown(Time.time))
-                {
-                    m_rangedWeapon.EnemyShoot(Time.time, m_playerPosition);
-                }
-            }
-            // if the player is out of range, move toward them.
-            else if (positionDifference >= 8f)
-            {
-                m_animator.setFacing("Left");
-                velocity.x = -speed;
 
+                    m_rangedWeapon.EnemyShoot(Time.time, m_playerPosition);
+                
             }
-            else if (positionDifference <= -8f)
+            // if the player is out of range, move away form them.
+            else if (positionDifference <= 8f && positionDifference >= 0)
             {
                 m_animator.setFacing("Right");
                 velocity.x = speed;
+
+            }
+            else if (positionDifference >= -8f && positionDifference <= 0)
+            {
+                m_animator.setFacing("Left");
+                velocity.x = -speed;
             }
 
-                // if the player is close melee
-            else 
+            else if (positionDifference >=13f)
             {
-                m_meleeAttack = true;
-                m_meleeTimer = Time.time + (m_meleeWeapon.attackDelay + m_meleeWeapon.attackDuration);
-                if (!m_meleeWeapon.OnCoolDown(Time.time))
-                {
-                    m_meleeWeapon.Swing(Time.time);
-                    m_animator.setAnimation("MovingEnemyMelee");
-                }
+                m_animator.setFacing("Left");
+                velocity.x = -speed;
+            }
+            else
+            {
+                m_animator.setFacing("Right");
+                velocity.x = speed;
             }
         }
         else if (m_pushedBack)
@@ -139,14 +128,7 @@ public class InternEnemy : MonoBehaviour
         {
             m_pushedBack = false;
         }
-        if (m_meleeAttack)
-        {
-            if (m_meleeTimer < Time.time)
-            {
-                m_meleeAttack = false;
-                m_animator.setAnimation("MovingEnemyIdle");
-            }
-        }
+
         velocity.y += -30 * Time.deltaTime;
         m_controller.move(velocity * Time.deltaTime);
     }

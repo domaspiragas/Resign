@@ -184,6 +184,12 @@ public class PlayerController : MonoBehaviour
             {
                 TakeDamage(col.gameObject.GetComponent<RatMeleeWeapon>().damage);
             }
+            //take mailman damage
+            else if (col.tag == "MailmanProjectile")
+            {
+                TakeDamage(col.gameObject.GetComponent<MailmanEnemyProjectile>().damage);
+                col.gameObject.GetComponent<MailmanEnemyProjectile>().Hit();
+            }
             else if (col.tag == "Trap")
             {
                 TakeDamage(col.gameObject.GetComponent<Trap>().damage);
