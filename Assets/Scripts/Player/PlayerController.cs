@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
 
     //Current Animations TODO: UPDATE TO real starting animation names
     private string m_idleAnim = "Idle";
-    private string m_rollAnim = "Roll";
+    private string m_rollAnim = "OldRoll";
     private string m_leftWalkAnim;
     private string m_rightWalkAnim;
     private string m_meleeAnim;
