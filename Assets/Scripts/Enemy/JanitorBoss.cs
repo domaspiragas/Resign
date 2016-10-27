@@ -29,12 +29,14 @@ public class JanitorBoss : MonoBehaviour
     private bool m_sweepLeft;
     private bool m_sweepRight;
     private bool m_waterTrap;
+    private bool m_seePlayer;
     private bool m_whatNext = true;
     private float m_meleeTimer;
     private float m_jumpTimer;
     private float m_jumpDelay;
     private float m_chasePlayerTimer;
     private float m_trapCoolDown;
+
 
 
 
@@ -55,42 +57,44 @@ public class JanitorBoss : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CheckIfDead();
-
-        Vector3 velocity = m_controller.velocity;
-        velocity.x = 0;
-        // cooldown for trap attack.
-        m_trapCoolDown += Time.deltaTime;
-        // determine the boss's next move. 
-        if (m_whatNext)
+        if (m_seePlayer)
         {
-            int nextMove = Random.Range(1, 101);
-            if (nextMove <= 25)
-            {
-                m_jumpRight = true;
-            }
-            else if (nextMove > 25 && nextMove <= 50)
-            {
-                m_chasePlayer = true;
+            CheckIfDead();
 
-            }
-            else if (nextMove > 50 && nextMove <= 75)
+            Vector3 velocity = m_controller.velocity;
+            velocity.x = 0;
+            // cooldown for trap attack.
+            m_trapCoolDown += Time.deltaTime;
+            // determine the boss's next move. 
+            if (m_whatNext)
             {
-                m_sweepAttack = true;
+                int nextMove = Random.Range(1, 101);
+                if (nextMove <= 25)
+                {
+                    m_jumpRight = true;
+                }
+                else if (nextMove > 25 && nextMove <= 50)
+                {
+                    m_chasePlayer = true;
+
+                }
+                else if (nextMove > 50 && nextMove <= 75)
+                {
+                    m_sweepAttack = true;
+                }
+                else
+                {
+                    m_waterTrap = true;
+                    m_trapCoolDown = 0;
+                }
+
+                m_whatNext = false;
+
             }
             else
             {
-                m_waterTrap = true;
-                m_trapCoolDown = 0;
-            }
-
-            m_whatNext = false;
-
-        }
-        else
-        {
-            if (m_jumpRight)
-            {
+                if (m_jumpRight)
+                {
                     // jump to the position on the Right side of the boss room
                     this.transform.position = CalculateBezierPoint(m_jumpTimer / 2f, this.transform.position, m_rightJumpPosition, m_controlPosition);
                     m_jumpTimer += Time.deltaTime;
@@ -102,153 +106,153 @@ public class JanitorBoss : MonoBehaviour
                         m_jumpTimer = 0;
                     }
 
-            }
-            else if (m_jumpLeft)
-            {
-                // delay the jump to the other side by 2 seconds
-                m_jumpDelay += Time.deltaTime;
-                if (m_jumpDelay > 2)
+                }
+                else if (m_jumpLeft)
                 {
-                    this.transform.position = CalculateBezierPoint(m_jumpTimer / 2f, this.transform.position, m_leftJumpPosition, m_controlPosition);
-                    m_jumpTimer += Time.deltaTime;
-                    if (this.transform.position.x < m_leftJumpPosition.x)
+                    // delay the jump to the other side by 2 seconds
+                    m_jumpDelay += Time.deltaTime;
+                    if (m_jumpDelay > 2)
                     {
-                        m_jumpLeft = false;
-                        m_jumpTimer = 0;
-                        m_whatNext = true;
-                        m_jumpDelay = 0;
+                        this.transform.position = CalculateBezierPoint(m_jumpTimer / 2f, this.transform.position, m_leftJumpPosition, m_controlPosition);
+                        m_jumpTimer += Time.deltaTime;
+                        if (this.transform.position.x < m_leftJumpPosition.x)
+                        {
+                            m_jumpLeft = false;
+                            m_jumpTimer = 0;
+                            m_whatNext = true;
+                            m_jumpDelay = 0;
+                        }
                     }
                 }
-            }
-            else if (m_chasePlayer)
-            {
-                m_chasePlayerTimer += Time.deltaTime;
-
-                float positionDifference = this.transform.position.x - m_playerPosition.x;
-                float positionDifferenceY = this.transform.position.y - m_playerPosition.y;
-
-                // our position - palyer position, if positive we're to the right of the palyer else we're to the left
-                if (positionDifference > 0 && positionDifference < 1.5f && Mathf.Abs(positionDifferenceY) < 2)
+                else if (m_chasePlayer)
                 {
-                    m_animator.setFacing("Left");
+                    m_chasePlayerTimer += Time.deltaTime;
 
-                    if (m_meleeWeapon.Swing(Time.time))
+                    float positionDifference = this.transform.position.x - m_playerPosition.x;
+                    float positionDifferenceY = this.transform.position.y - m_playerPosition.y;
+
+                    // our position - palyer position, if positive we're to the right of the palyer else we're to the left
+                    if (positionDifference > 0 && positionDifference < 1.5f && Mathf.Abs(positionDifferenceY) < 2)
                     {
-                        m_animator.setAnimation("MovingEnemyMelee");
-                        m_meleeAttack = true;
-                        m_meleeTimer = Time.time + (m_meleeWeapon.attackDelay + m_meleeWeapon.attackDuration);
-                    }
-                }
-                else if (positionDifference < 0 && positionDifference > -1.5f && Mathf.Abs(positionDifferenceY) < 2)
-                {
-                    m_animator.setFacing("Right");
+                        m_animator.setFacing("Left");
 
-                    if (m_meleeWeapon.Swing(Time.time))
+                        if (m_meleeWeapon.Swing(Time.time))
+                        {
+                            m_animator.setAnimation("MovingEnemyMelee");
+                            m_meleeAttack = true;
+                            m_meleeTimer = Time.time + (m_meleeWeapon.attackDelay + m_meleeWeapon.attackDuration);
+                        }
+                    }
+                    else if (positionDifference < 0 && positionDifference > -1.5f && Mathf.Abs(positionDifferenceY) < 2)
                     {
-                        m_animator.setAnimation("MovingEnemyMelee");
-                        m_meleeAttack = true;
-                        m_meleeTimer = Time.time + (m_meleeWeapon.attackDelay + m_meleeWeapon.attackDuration);
-                    }
-                }
-                else if (positionDifference >= 1.5f && !m_meleeAttack)
-                {
-                    velocity.x = -speed;
-                    m_animator.setFacing("Left");
-                }
-                else if (!m_meleeAttack)
-                {
-                    velocity.x = speed;
-                    m_animator.setFacing("Right");
-                }
+                        m_animator.setFacing("Right");
 
-                if (m_meleeAttack)
-                {
-                    if (m_meleeTimer < Time.time)
+                        if (m_meleeWeapon.Swing(Time.time))
+                        {
+                            m_animator.setAnimation("MovingEnemyMelee");
+                            m_meleeAttack = true;
+                            m_meleeTimer = Time.time + (m_meleeWeapon.attackDelay + m_meleeWeapon.attackDuration);
+                        }
+                    }
+                    else if (positionDifference >= 1.5f && !m_meleeAttack)
+                    {
+                        velocity.x = -speed;
+                        m_animator.setFacing("Left");
+                    }
+                    else if (!m_meleeAttack)
+                    {
+                        velocity.x = speed;
+                        m_animator.setFacing("Right");
+                    }
+
+                    if (m_meleeAttack)
+                    {
+                        if (m_meleeTimer < Time.time)
+                        {
+                            m_meleeAttack = false;
+                            m_animator.setAnimation("MovingEnemyIdle");
+                        }
+                    }
+                    if (m_chasePlayerTimer > 10)
                     {
                         m_meleeAttack = false;
                         m_animator.setAnimation("MovingEnemyIdle");
+                        m_chasePlayerTimer = 0;
+                        m_chasePlayer = false;
+                        m_whatNext = true;
                     }
+                    velocity.y += -50 * Time.deltaTime;
+                    m_controller.move(velocity * Time.deltaTime);
                 }
-                if (m_chasePlayerTimer > 10)
+                else if (m_sweepAttack)
                 {
-                    m_meleeAttack = false;
-                    m_animator.setAnimation("MovingEnemyIdle");
-                    m_chasePlayerTimer = 0;
-                    m_chasePlayer = false;
-                    m_whatNext = true;
-                }
-                velocity.y += -50 * Time.deltaTime;
-                m_controller.move(velocity * Time.deltaTime);
-            }
-            else if (m_sweepAttack)
-            {
-                float positionDifference = this.transform.position.x - m_playerPosition.x;
+                    float positionDifference = this.transform.position.x - m_playerPosition.x;
 
-                if(positionDifference < 0 && !m_sweepLeft && !m_sweepRight)
-                {
-                    m_sweepRight = true;
-                }
-                else if (positionDifference > 0 && !m_sweepLeft && !m_sweepRight)
-                {
-                    m_sweepLeft = true;
-                }
-
-                if (m_sweepLeft)
-                {
-                    //TODO : add sweep animation here.
-                    m_animator.setFacing("Left");
-                    velocity.x = -sweepSpeed;
-                    if(this.transform.position.x <= m_leftJumpPosition.x)
+                    if (positionDifference < 0 && !m_sweepLeft && !m_sweepRight)
                     {
-                        m_sweepLeft = false;
                         m_sweepRight = true;
                     }
-                }
-                else if (m_sweepRight)
-                {
-                    //TODO : add sweep animation here.
-                    m_animator.setFacing("Right");
-                    velocity.x = sweepSpeed;
-                    if(this.transform.position.x >= m_rightJumpPosition.x)
+                    else if (positionDifference > 0 && !m_sweepLeft && !m_sweepRight)
                     {
-                        m_sweepRight = false;
-                        m_sweepAttack = false;
-                        m_whatNext = true;
-                        // TODO: Idle Animation here
+                        m_sweepLeft = true;
                     }
-                }
-                velocity.y += -50 * Time.deltaTime;
-                m_controller.move(velocity*Time.deltaTime);
-            }
-            else if (m_waterTrap)
-            {
-                // pick a random spot within the range
-                float positionDifference = this.transform.position.x - m_playerPosition.x;
-                // walk to the spot
-                if (positionDifference >= 6f)
-                {
-                    velocity.x = -speed;
-                    m_animator.setFacing("Left");
-                }
-                else if (positionDifference <= -6f)
-                {
-                    velocity.x = speed;
-                    m_animator.setFacing("Right");
-                }
-                // spawn the trap at our spot
-                else
-                {
-                    GameObject trap = (GameObject)Instantiate(waterTrap, this.transform.position, Quaternion.identity);
-                    m_waterTrap = false;
-                    m_whatNext = true;
-                }
 
-                velocity.y += -50 * Time.deltaTime;
-                m_controller.move(velocity * Time.deltaTime);
-                Debug.Log("gets here 5");
+                    if (m_sweepLeft)
+                    {
+                        //TODO : add sweep animation here.
+                        m_animator.setFacing("Left");
+                        velocity.x = -sweepSpeed;
+                        if (this.transform.position.x <= m_leftJumpPosition.x)
+                        {
+                            m_sweepLeft = false;
+                            m_sweepRight = true;
+                        }
+                    }
+                    else if (m_sweepRight)
+                    {
+                        //TODO : add sweep animation here.
+                        m_animator.setFacing("Right");
+                        velocity.x = sweepSpeed;
+                        if (this.transform.position.x >= m_rightJumpPosition.x)
+                        {
+                            m_sweepRight = false;
+                            m_sweepAttack = false;
+                            m_whatNext = true;
+                            // TODO: Idle Animation here
+                        }
+                    }
+                    velocity.y += -50 * Time.deltaTime;
+                    m_controller.move(velocity * Time.deltaTime);
+                }
+                else if (m_waterTrap)
+                {
+                    // pick a random spot within the range
+                    float positionDifference = this.transform.position.x - m_playerPosition.x;
+                    // walk to the spot
+                    if (positionDifference >= 6f)
+                    {
+                        velocity.x = -speed;
+                        m_animator.setFacing("Left");
+                    }
+                    else if (positionDifference <= -6f)
+                    {
+                        velocity.x = speed;
+                        m_animator.setFacing("Right");
+                    }
+                    // spawn the trap at our spot
+                    else
+                    {
+                        GameObject trap = (GameObject)Instantiate(waterTrap, this.transform.position, Quaternion.identity);
+                        m_waterTrap = false;
+                        m_whatNext = true;
+                    }
+
+                    velocity.y += -50 * Time.deltaTime;
+                    m_controller.move(velocity * Time.deltaTime);
+                }
             }
+
         }
-
     }
 
     public void TakeDamage(float damage)
@@ -259,6 +263,10 @@ public class JanitorBoss : MonoBehaviour
     public void SetPlayerPosition(Vector3 position)
     {
         m_playerPosition = position;
+    }
+    public void SetSeePlayer()
+    {
+        m_seePlayer = true;
     }
     private void CheckIfDead()
     {

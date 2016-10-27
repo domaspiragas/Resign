@@ -8,6 +8,7 @@ public class JanitorPlayerDetection : MonoBehaviour
         if (col.tag == "Player")
         {
             transform.parent.gameObject.GetComponent<JanitorBoss>().SetPlayerPosition(col.transform.position);
+            transform.parent.gameObject.GetComponent<JanitorBoss>().SetSeePlayer();
         }
     }
     void OnTriggerStay2D(Collider2D col)
