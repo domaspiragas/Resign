@@ -4,12 +4,13 @@ using System.Collections;
 public class JanitorBoss : MonoBehaviour
 {
     public float health = 50f;
-    public float speed = 2f;
+    public float speed = 9f;
+    public float sweepSpeed = 15f;
     public float chanceOfHealthDrop = 15f;
     public GameObject meleeWeapon;
     public GameObject healthPickUp;
 
-    //private JanitorMeleeWeapon m_meleeWeapon;
+    private JanitorMeleeWeapon m_meleeWeapon;
     private JanitorCharacterController2D m_controller;
     private AnimationController2D m_animator;
 
@@ -19,12 +20,18 @@ public class JanitorBoss : MonoBehaviour
     private Vector3 m_rightJumpPosition = new Vector3(176f, 6f, 0);
     private Vector3 m_controlPosition = new Vector3(157f, 17f, 0);
     private bool m_moveRight;
-    private bool m_meleeAttack = false;
-    private bool m_jumpLeft = true;
+    private bool m_meleeAttack;
+    private bool m_jumpLeft;
     private bool m_jumpRight;
+    private bool m_chasePlayer;
+    private bool m_sweepAttack;
+    private bool m_whatNext = true;
     private float m_meleeTimer;
     private float m_jumpTimer;
     private float m_jumpDelay;
+    private float m_chasePlayerTimer;
+
+
 
 
 
@@ -34,7 +41,7 @@ public class JanitorBoss : MonoBehaviour
     {
         m_controller = gameObject.GetComponent<JanitorCharacterController2D>();
         m_animator = gameObject.GetComponent<AnimationController2D>();
-        // m_meleeWeapon = (JanitorMeleeWeapon)meleeWeapon.GetComponent(typeof(JanitorMeleeWeapon));
+        m_meleeWeapon = (JanitorMeleeWeapon)meleeWeapon.GetComponent(typeof(JanitorMeleeWeapon));
         m_health = health;
         m_startingPosition = this.transform.position;
     }
@@ -48,69 +55,119 @@ public class JanitorBoss : MonoBehaviour
         Vector3 velocity = m_controller.velocity;
         velocity.x = 0;
 
-        if (!m_meleeAttack)
+        // determine the boss's next move. 
+        if (m_whatNext)
         {
-            if (m_jumpLeft)
+            int nextMove = Random.Range(1, 101);
+            if (nextMove < 50)
             {
-                this.transform.position = CalculateBezierPoint(m_jumpTimer / 1.5f, this.transform.position, m_rightJumpPosition, m_controlPosition);
-                m_jumpTimer += Time.deltaTime;
-                if (this.transform.position.x > m_rightJumpPosition.x)
-                {
-                    m_jumpLeft = false;
-                    m_jumpRight = true;
-                    m_jumpTimer = 0;
-                }
+                m_jumpRight = true;
             }
-            else if (m_jumpRight)
+            else
             {
+                m_chasePlayer = true;
+
+            }
+            m_whatNext = false;
+        }
+        else
+        {
+            if (m_jumpRight)
+            {
+                    // jump to the position on the Right side of the boss room
+                    this.transform.position = CalculateBezierPoint(m_jumpTimer / 2f, this.transform.position, m_rightJumpPosition, m_controlPosition);
+                    m_jumpTimer += Time.deltaTime;
+                    // if we've reached the side, prepare to jump to the other side
+                    if (this.transform.position.x > m_rightJumpPosition.x)
+                    {
+                        m_jumpRight = false;
+                        m_jumpLeft = true;
+                        m_jumpTimer = 0;
+                    }
+
+            }
+            else if (m_jumpLeft)
+            {
+                // delay the jump to the other side by 2 seconds
                 m_jumpDelay += Time.deltaTime;
                 if (m_jumpDelay > 2)
                 {
-
-                    this.transform.position = CalculateBezierPoint(m_jumpTimer / 1.5f, this.transform.position, m_leftJumpPosition, m_controlPosition);
+                    this.transform.position = CalculateBezierPoint(m_jumpTimer / 2f, this.transform.position, m_leftJumpPosition, m_controlPosition);
                     m_jumpTimer += Time.deltaTime;
                     if (this.transform.position.x < m_leftJumpPosition.x)
                     {
-                        m_jumpRight = false;
+                        m_jumpLeft = false;
                         m_jumpTimer = 0;
+                        m_whatNext = true;
                         m_jumpDelay = 0;
                     }
                 }
             }
-            //float positionDifference = this.transform.position.x - m_playerPosition.x;
-
-            //// our position - palyer position, if positive we're to the right of the palyer else we're to the left
-            //if (positionDifference > 0 && positionDifference > 1.5f)
-            //{
-            //    velocity.x = -speed;
-            //    m_animator.setFacing("Left");
-            //}
-            //else if (positionDifference < 0 && positionDifference < -1.5f)
-            //{
-            //    velocity.x = speed;
-            //    m_animator.setFacing("Right");
-            //}
-            //else
-            //{
-            //    m_meleeAttack = true;
-            //    m_meleeTimer = Time.time + (m_meleeWeapon.attackDelay + m_meleeWeapon.attackDuration);
-            //    if (m_meleeWeapon.Swing(Time.time))
-            //    {
-            //        m_animator.setAnimation("MovingEnemyMelee");
-            //    }
-            //}
-        }
-        if (m_meleeAttack)
-        {
-            if (m_meleeTimer < Time.time)
+            else if (m_chasePlayer)
             {
-                m_meleeAttack = false;
-                m_animator.setAnimation("MovingEnemyIdle");
+                m_chasePlayerTimer += Time.deltaTime;
+
+                float positionDifference = this.transform.position.x - m_playerPosition.x;
+                float positionDifferenceY = this.transform.position.y - m_playerPosition.y;
+
+                // our position - palyer position, if positive we're to the right of the palyer else we're to the left
+                if (positionDifference > 0 && positionDifference < 1.5f && Mathf.Abs(positionDifferenceY) < 2)
+                {
+                    m_animator.setFacing("Left");
+
+                    if (m_meleeWeapon.Swing(Time.time))
+                    {
+                        m_animator.setAnimation("MovingEnemyMelee");
+                        m_meleeAttack = true;
+                        m_meleeTimer = Time.time + (m_meleeWeapon.attackDelay + m_meleeWeapon.attackDuration);
+                    }
+                }
+                else if (positionDifference < 0 && positionDifference > -1.5f && Mathf.Abs(positionDifferenceY) < 2)
+                {
+                    m_animator.setFacing("Right");
+
+                    if (m_meleeWeapon.Swing(Time.time))
+                    {
+                        m_animator.setAnimation("MovingEnemyMelee");
+                        m_meleeAttack = true;
+                        m_meleeTimer = Time.time + (m_meleeWeapon.attackDelay + m_meleeWeapon.attackDuration);
+                    }
+                }
+                else if (positionDifference >= 1.5f && !m_meleeAttack)
+                {
+                    velocity.x = -speed;
+                    m_animator.setFacing("Left");
+                }
+                else if (!m_meleeAttack)
+                {
+                    velocity.x = speed;
+                    m_animator.setFacing("Right");
+                }
+
+                if (m_meleeAttack)
+                {
+                    if (m_meleeTimer < Time.time)
+                    {
+                        m_meleeAttack = false;
+                        m_animator.setAnimation("MovingEnemyIdle");
+                    }
+                }
+                if (m_chasePlayerTimer > 10)
+                {
+                    m_meleeAttack = false;
+                    m_animator.setAnimation("MovingEnemyIdle");
+                    m_chasePlayerTimer = 0;
+                    m_chasePlayer = false;
+                    m_whatNext = true;
+                }
+                velocity.y += -50 * Time.deltaTime;
+                m_controller.move(velocity * Time.deltaTime);
+            }
+            else if (m_sweepAttack)
+            {
+
             }
         }
-
-        velocity.y += -50 * Time.deltaTime;
-        m_controller.move(velocity * Time.deltaTime);
 
     }
 
