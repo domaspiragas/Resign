@@ -25,6 +25,8 @@ public class JanitorBoss : MonoBehaviour
     private bool m_jumpRight;
     private bool m_chasePlayer;
     private bool m_sweepAttack;
+    private bool m_sweepLeft;
+    private bool m_sweepRight;
     private bool m_whatNext = true;
     private float m_meleeTimer;
     private float m_jumpTimer;
@@ -59,9 +61,10 @@ public class JanitorBoss : MonoBehaviour
         if (m_whatNext)
         {
             int nextMove = Random.Range(1, 101);
-            if (nextMove < 50)
+            if (nextMove <= 100)
             {
-                m_jumpRight = true;
+                // m_jumpRight = true;
+                m_sweepAttack = true;
             }
             else
             {
@@ -165,7 +168,43 @@ public class JanitorBoss : MonoBehaviour
             }
             else if (m_sweepAttack)
             {
+                float positionDifference = this.transform.position.x - m_playerPosition.x;
 
+                if(positionDifference < 0 && !m_sweepLeft && !m_sweepRight)
+                {
+                    m_sweepRight = true;
+                }
+                else if (positionDifference > 0 && !m_sweepLeft && !m_sweepRight)
+                {
+                    m_sweepLeft = true;
+                }
+
+                if (m_sweepLeft)
+                {
+                    //TODO : add sweep animation here.
+                    m_animator.setFacing("Left");
+                    velocity.x = -sweepSpeed;
+                    if(this.transform.position.x <= m_leftJumpPosition.x)
+                    {
+                        m_sweepLeft = false;
+                        m_sweepRight = true;
+                    }
+                }
+                else if (m_sweepRight)
+                {
+                    //TODO : add sweep animation here.
+                    m_animator.setFacing("Right");
+                    velocity.x = sweepSpeed;
+                    if(this.transform.position.x >= m_rightJumpPosition.x)
+                    {
+                        m_sweepRight = false;
+                        m_sweepAttack = false;
+                        m_whatNext = true;
+                        // TODO: Idle Animation here
+                    }
+                }
+                velocity.y += -50 * Time.deltaTime;
+                m_controller.move(velocity*Time.deltaTime);
             }
         }
 
