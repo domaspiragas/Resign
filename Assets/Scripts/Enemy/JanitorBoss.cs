@@ -9,6 +9,7 @@ public class JanitorBoss : MonoBehaviour
     public float chanceOfHealthDrop = 15f;
     public GameObject meleeWeapon;
     public GameObject healthPickUp;
+    public GameObject waterTrap;
 
     private JanitorMeleeWeapon m_meleeWeapon;
     private JanitorCharacterController2D m_controller;
@@ -27,6 +28,7 @@ public class JanitorBoss : MonoBehaviour
     private bool m_sweepAttack;
     private bool m_sweepLeft;
     private bool m_sweepRight;
+    private bool m_waterTrap;
     private bool m_whatNext = true;
     private float m_meleeTimer;
     private float m_jumpTimer;
@@ -61,17 +63,23 @@ public class JanitorBoss : MonoBehaviour
         if (m_whatNext)
         {
             int nextMove = Random.Range(1, 101);
-            if (nextMove <= 100)
+            if (nextMove <= 25)
             {
-                // m_jumpRight = true;
-                m_sweepAttack = true;
+                m_jumpRight = true;
             }
-            else
+            else if (nextMove > 25 && nextMove <= 50)
             {
                 m_chasePlayer = true;
 
             }
-            m_whatNext = false;
+            else if (nextMove > 50 && nextMove <= 75)
+            {
+                m_whatNext = false;
+            }
+            else
+            {
+                m_waterTrap = true;
+            }
         }
         else
         {
@@ -206,7 +214,28 @@ public class JanitorBoss : MonoBehaviour
                 velocity.y += -50 * Time.deltaTime;
                 m_controller.move(velocity*Time.deltaTime);
             }
+            else if (m_waterTrap)
+            {
+                Vector3 trapLocation = new Vector3(Random.Range(m_leftJumpPosition.x, m_rightJumpPosition.x), 0, 0);
+                float positionDifference = this.transform.position.x - trapLocation.x;
+                if (positionDifference >= .5f)
+                {
+                    velocity.x = -speed;
+                    m_animator.setFacing("Left");
+                }
+                else if (positionDifference <= -.5f)
+                {
+                    velocity.x = speed;
+                    m_animator.setFacing("Right");
+                }
+                else
+                {
+                    GameObject trap = (GameObject)Instantiate(waterTrap, this.transform.position, Quaternion.identity);
+                }
+
+            }
         }
+
 
     }
 
