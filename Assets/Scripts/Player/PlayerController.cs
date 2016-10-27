@@ -205,6 +205,19 @@ public class PlayerController : MonoBehaviour
             {
                 TakeDamage(col.gameObject.GetComponent<Trap>().damage);
             }
+            else if (col.tag == "JanitorTrap")
+            {
+                TakeDamage(col.gameObject.GetComponent<JanitorTrap>().damage);
+            }
+            else if (col.tag == "JanitorBoss")
+            {
+                // when touching the boss TODO: change so charge etc only do damage 
+                TakeDamage(10);
+            }
+            else if (col.tag == "JanitorBossMelee")
+            {
+                TakeDamage(col.gameObject.GetComponent<JanitorMeleeWeapon>().damage);
+            }
 
             // after taking damage we need to know if we're dead.
             CheckIfShouldDie();

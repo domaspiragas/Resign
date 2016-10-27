@@ -55,6 +55,10 @@ public class MailBagProjectile : MonoBehaviour {
             col.gameObject.GetComponent<MailmanMiniBoss>().TakeDamage(damage);
             Hit();
         }
+        else if (col.tag == "JanitorBoss")
+        {
+            col.gameObject.GetComponent<JanitorBoss>().TakeDamage(damage);
+        }
         else if (col.tag == "PhysicalObject")
         {
             Hit();
