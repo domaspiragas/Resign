@@ -34,6 +34,7 @@ public class JanitorBoss : MonoBehaviour
     private float m_jumpTimer;
     private float m_jumpDelay;
     private float m_chasePlayerTimer;
+    private float m_trapCoolDown;
 
 
 
@@ -58,7 +59,8 @@ public class JanitorBoss : MonoBehaviour
 
         Vector3 velocity = m_controller.velocity;
         velocity.x = 0;
-
+        // cooldown for trap attack.
+        m_trapCoolDown += Time.deltaTime;
         // determine the boss's next move. 
         if (m_whatNext)
         {
@@ -74,12 +76,16 @@ public class JanitorBoss : MonoBehaviour
             }
             else if (nextMove > 50 && nextMove <= 75)
             {
-                m_whatNext = false;
+                m_sweepAttack = true;
             }
-            else
+            else if (m_trapCoolDown > 10)
             {
                 m_waterTrap = true;
+                m_trapCoolDown = 0;
             }
+
+            m_whatNext = false;
+
         }
         else
         {
@@ -216,26 +222,32 @@ public class JanitorBoss : MonoBehaviour
             }
             else if (m_waterTrap)
             {
-                Vector3 trapLocation = new Vector3(Random.Range(m_leftJumpPosition.x, m_rightJumpPosition.x), 0, 0);
-                float positionDifference = this.transform.position.x - trapLocation.x;
-                if (positionDifference >= .5f)
+                // pick a random spot within the range
+                float positionDifference = this.transform.position.x - m_playerPosition.x;
+                // walk to the spot
+                if (positionDifference >= 6f)
                 {
                     velocity.x = -speed;
                     m_animator.setFacing("Left");
                 }
-                else if (positionDifference <= -.5f)
+                else if (positionDifference <= -6f)
                 {
                     velocity.x = speed;
                     m_animator.setFacing("Right");
                 }
+                // spawn the trap at our spot
                 else
                 {
                     GameObject trap = (GameObject)Instantiate(waterTrap, this.transform.position, Quaternion.identity);
+                    m_waterTrap = false;
+                    m_whatNext = true;
                 }
 
+                velocity.y += -50 * Time.deltaTime;
+                m_controller.move(velocity * Time.deltaTime);
+                Debug.Log("gets here 5");
             }
         }
-
 
     }
 
