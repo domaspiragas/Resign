@@ -14,6 +14,7 @@ public class RatEnemy : MonoBehaviour {
     public float chanceOfHealthDrop = 15f;
     public GameObject meleeWeapon;
     public GameObject healthPickUp;
+    public GameObject healthBar;
 
     private RatMeleeWeapon m_meleeWeapon;
     private CharacterController2D m_controller;
@@ -108,6 +109,7 @@ public class RatEnemy : MonoBehaviour {
     public void TakeDamage(float damage)
     {
         m_health -= damage;
+        UpdateHealthUI();
     }
 
     public void SetFollowPlayer(bool follow)
@@ -138,5 +140,9 @@ public class RatEnemy : MonoBehaviour {
             GameObject healthDrop = (GameObject)Instantiate(healthPickUp, this.transform.position, Quaternion.identity);
             healthDrop.gameObject.GetComponent<HealthPickUp>().AssignLobDirection(Random.Range(-.3f, .3f));
         }
+    }
+    private void UpdateHealthUI()
+    {
+        healthBar.transform.localScale = new Vector3((m_health / health), healthBar.transform.localScale.y, 0);
     }
 }
