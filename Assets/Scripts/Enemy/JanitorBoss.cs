@@ -78,7 +78,7 @@ public class JanitorBoss : MonoBehaviour
             {
                 m_sweepAttack = true;
             }
-            else if (m_trapCoolDown > 10)
+            else
             {
                 m_waterTrap = true;
                 m_trapCoolDown = 0;
