@@ -9,21 +9,21 @@ public class MovingEnemyPlayerDetection : MonoBehaviour
 
         if (col.tag == "Player")
         {
-            transform.parent.gameObject.GetComponent<MailmanMiniBoss>().SetFollowPlayer(true);
+            transform.parent.gameObject.GetComponent<MovingEnemy>().SetFollowPlayer(true);
         }
     }
     void OnTriggerStay2D(Collider2D col)
     {
         if (col.tag == "Player")
         {
-            transform.parent.gameObject.GetComponent<MailmanMiniBoss>().SetPlayerPosition(col.transform.position);
+            transform.parent.gameObject.GetComponent<MovingEnemy>().SetPlayerPosition(col.transform.position);
         }
     }
     void OnTriggerExit2D(Collider2D col)
     {
         if (col.tag == "Player")
         {
-            transform.parent.gameObject.GetComponent<MailmanMiniBoss>().SetFollowPlayer(false);
+            transform.parent.gameObject.GetComponent<MovingEnemy>().SetFollowPlayer(false);
 
         }
 

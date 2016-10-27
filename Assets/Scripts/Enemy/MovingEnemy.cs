@@ -4,8 +4,6 @@ using Prime31;
 
 public class MovingEnemy : MonoBehaviour
 {
-
-
     public float health = 50f;
     public float patrolRange = 10;
     public float speed = 2f;
