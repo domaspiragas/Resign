@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour
         m_playerHealth = maxHealth;
         m_rollCount = maxRollCount;
         //get the health ui object
-        m_healthUI = GameObject.Find("Health");
+        m_healthUI = GameObject.Find("PlayerHealth");
         m_rollUI = GameObject.Find("RollCount");
         m_livesUI = GameObject.Find("Lives");
         m_toggleUI = GameObject.Find("Toggle");

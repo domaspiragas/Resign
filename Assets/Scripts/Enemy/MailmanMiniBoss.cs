@@ -11,6 +11,7 @@ public class MailmanMiniBoss : MonoBehaviour
     public GameObject mailBagRangedWeapon;
     public GameObject packageRangedWeapon;
     public GameObject healthPickUp;
+    public GameObject healthBar;
 
     private MailmanMiniBossPackageWeapon m_packageWeapon;
     private MailmanMinibossBagWeapon m_bagWeapon;
@@ -22,6 +23,7 @@ public class MailmanMiniBoss : MonoBehaviour
     private Vector3 m_playerPosition;
     private bool m_moveRight;
 
+    private GameObject m_healthUI;
 
     private float m_health;
     // Use this for initialization
@@ -82,6 +84,7 @@ public class MailmanMiniBoss : MonoBehaviour
     public void TakeDamage(float damage)
     {
         m_health -= damage;
+        UpdateHealthUI();
     }
 
     public void SetFollowPlayer(bool follow)
@@ -112,5 +115,10 @@ public class MailmanMiniBoss : MonoBehaviour
             GameObject healthDrop = (GameObject)Instantiate(healthPickUp, this.transform.position, Quaternion.identity);
             healthDrop.gameObject.GetComponent<HealthPickUp>().AssignLobDirection(Random.Range(-.3f, .3f));
         }
+    }
+
+    private void UpdateHealthUI()
+    {
+        healthBar.transform.localScale = new Vector3((m_health / health), healthBar.transform.localScale.y, 0);
     }
 }
