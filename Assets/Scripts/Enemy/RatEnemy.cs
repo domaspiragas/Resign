@@ -7,7 +7,8 @@ public class RatEnemy : MonoBehaviour {
 
 
     public float health = 50f;
-    public float patrolRange = 10;
+    public bool patrol = false;
+    public float patrolRange = 10f;
     public float speed = 6f;
     public float gravity = -50f;
     public float jumpHeight = 1f;
@@ -26,6 +27,7 @@ public class RatEnemy : MonoBehaviour {
     private bool m_moveRight;
     private bool m_meleeAttack = false;
     private float m_meleeTimer;
+    private bool m_patrol;
 
     private float m_health;
     // Use this for initialization
@@ -35,6 +37,7 @@ public class RatEnemy : MonoBehaviour {
         m_animator = gameObject.GetComponent<AnimationController2D>();
         m_meleeWeapon = (RatMeleeWeapon)meleeWeapon.GetComponent(typeof(RatMeleeWeapon));
         m_health = health;
+        m_patrol = patrol;
         m_startingPosition = this.transform.position;
     }
 
@@ -47,7 +50,7 @@ public class RatEnemy : MonoBehaviour {
         Vector3 velocity = m_controller.velocity;
         velocity.x = 0;
         // Patrols left and right patrolRange distance
-        if (!m_followPlayer)
+        if (!m_followPlayer && m_patrol)
         {
             if (this.transform.position.x >= m_startingPosition.x + patrolRange && !m_meleeAttack)
             {

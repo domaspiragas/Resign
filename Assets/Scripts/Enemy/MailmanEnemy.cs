@@ -5,6 +5,7 @@ using Prime31;
 public class MailmanEnemy : MonoBehaviour {
 
     public float health = 50f;
+    public bool patrol = false;
     public float patrolRange = 10;
     public float speed = 2f;
     public float chanceOfHealthDrop = 15f;
@@ -23,6 +24,7 @@ public class MailmanEnemy : MonoBehaviour {
     private bool m_moveRight;
     private bool m_pushedBack = false;
     private float m_pushbackTimer;
+    private bool m_patrol;
 
 
     private float m_health;
@@ -33,6 +35,7 @@ public class MailmanEnemy : MonoBehaviour {
         m_animator = gameObject.GetComponent<AnimationController2D>();
         m_rangedWeapon = (MailmanRangedWeapon)rangedWeapon.GetComponent(typeof(MailmanRangedWeapon));
         m_health = health;
+        m_patrol = patrol;
         m_startingPosition = this.transform.position;
     }
 
@@ -45,7 +48,7 @@ public class MailmanEnemy : MonoBehaviour {
         Vector3 velocity = m_controller.velocity;
         velocity.x = 0;
         // Patrols left and right patrolRange distance
-        if (!m_followPlayer && !m_pushedBack)
+        if (!m_followPlayer && !m_pushedBack && m_patrol)
         {
             m_animator.setAnimation("MovingEnemyIdle");
             if (this.transform.position.x >= m_startingPosition.x + patrolRange)
