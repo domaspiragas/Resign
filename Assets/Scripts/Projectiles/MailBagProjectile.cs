@@ -6,13 +6,17 @@ public class MailBagProjectile : MonoBehaviour {
     public float damage;
     public float range = 1f;
 
+    private AnimationController2D m_animator;
+
     // tracks how long the bullet lives
     private float m_lifeTimer;
 
     void Start()
     {
+        m_animator = gameObject.GetComponent<AnimationController2D>();
         // initialize a time at which the bullet will get destroyed (now + lifespan)
         m_lifeTimer = Time.time + range;
+        m_animator.setAnimation("Mail Attack");
     }
     void Update()
     {
@@ -58,6 +62,7 @@ public class MailBagProjectile : MonoBehaviour {
         else if (col.tag == "JanitorBoss")
         {
             col.gameObject.GetComponent<JanitorBoss>().TakeDamage(damage);
+            Hit();
         }
         else if (col.tag == "PhysicalObject")
         {

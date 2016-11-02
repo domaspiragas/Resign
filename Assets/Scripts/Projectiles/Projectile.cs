@@ -3,6 +3,9 @@ using System.Collections;
 
 public class Projectile : MonoBehaviour
 {
+
+    private AnimationController2D m_animator;
+
     public float damage;
     public float range = 1f;
 
@@ -11,13 +14,16 @@ public class Projectile : MonoBehaviour
 
     void Start()
     {
+        m_animator = gameObject.GetComponent<AnimationController2D>();
         // initialize a time at which the bullet will get destroyed (now + lifespan)
         m_lifeTimer = Time.time + range;
+        m_animator.setAnimation("Throwing");
     }
     void Update()
     {
+
         // when now is later than the start+lifespan, bullet should be destroyed
-        if(m_lifeTimer < Time.time)
+        if (m_lifeTimer < Time.time)
         {
             Destroy(gameObject);
         }
@@ -74,5 +80,4 @@ public class Projectile : MonoBehaviour
     {
         return damage;
     }
-
 }

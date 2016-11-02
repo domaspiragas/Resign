@@ -13,6 +13,7 @@ public class MailmanEnemy : MonoBehaviour {
     public float pushbackSpeed = 10;
     public GameObject rangedWeapon;
     public GameObject healthPickUp;
+    public GameObject healthBar;
 
     private MailmanRangedWeapon m_rangedWeapon;
     private CharacterController2D m_controller;
@@ -139,6 +140,7 @@ public class MailmanEnemy : MonoBehaviour {
     public void TakeDamage(float damage)
     {
         m_health -= damage;
+        UpdateHealthUI();
     }
 
     public void SetFollowPlayer(bool follow)
@@ -179,5 +181,9 @@ public class MailmanEnemy : MonoBehaviour {
     public bool GetPushedBack()
     {
         return m_pushedBack;
+    }
+    private void UpdateHealthUI()
+    {
+        healthBar.transform.localScale = new Vector3((m_health / health), healthBar.transform.localScale.y, 0);
     }
 }

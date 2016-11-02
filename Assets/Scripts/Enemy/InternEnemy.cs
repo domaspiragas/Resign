@@ -14,6 +14,7 @@ public class InternEnemy : MonoBehaviour
     public GameObject meleeWeapon;
     public GameObject rangedWeapon;
     public GameObject healthPickUp;
+    public GameObject healthBar;
 
     private InternMeleeWeapon m_meleeWeapon;
     private InternRangedWeapon m_rangedWeapon;
@@ -157,6 +158,7 @@ public class InternEnemy : MonoBehaviour
     public void TakeDamage(float damage)
     {
         m_health -= damage;
+        UpdateHealthUI();
     }
 
     public void SetFollowPlayer(bool follow)
@@ -197,5 +199,9 @@ public class InternEnemy : MonoBehaviour
     public bool GetPushedBack()
     {
         return m_pushedBack;
+    }
+    private void UpdateHealthUI()
+    {
+        healthBar.transform.localScale = new Vector3((m_health / health), healthBar.transform.localScale.y, 0);
     }
 }
