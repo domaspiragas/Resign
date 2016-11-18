@@ -18,12 +18,13 @@ public class JanitorBoss : MonoBehaviour
     private Vector3 m_startingPosition;
     private Vector3 m_playerPosition;
     private Vector3 m_leftJumpPosition = new Vector3(138f, 6f, 0);
-    private Vector3 m_rightJumpPosition = new Vector3(176f, 6f, 0);
+    private Vector3 m_rightJumpPosition = new Vector3(175f, 6f, 0);
     private Vector3 m_controlPosition = new Vector3(157f, 17f, 0);
     private bool m_moveRight;
     private bool m_meleeAttack;
     private bool m_jumpLeft;
     private bool m_jumpRight;
+    private bool m_jumpBool;
     private bool m_chasePlayer;
     private bool m_sweepAttack;
     private bool m_sweepLeft;
@@ -72,6 +73,7 @@ public class JanitorBoss : MonoBehaviour
                 if (nextMove <= 25)
                 {
                     m_jumpRight = true;
+                    m_jumpBool = true;
                 }
                 else if (nextMove > 25 && nextMove <= 50)
                 {
@@ -95,27 +97,46 @@ public class JanitorBoss : MonoBehaviour
             {
                 if (m_jumpRight)
                 {
-                    // jump to the position on the Right side of the boss room
-                    this.transform.position = CalculateBezierPoint(m_jumpTimer / 2f, this.transform.position, m_rightJumpPosition, m_controlPosition);
-                    m_jumpTimer += Time.deltaTime;
-                    // if we've reached the side, prepare to jump to the other side
-                    if (this.transform.position.x > m_rightJumpPosition.x)
+                    m_jumpDelay += Time.deltaTime;
+                    if (m_jumpDelay > 2)
                     {
-                        m_jumpRight = false;
-                        m_jumpLeft = true;
-                        m_jumpTimer = 0;
+                        if (m_jumpBool)
+                        {
+                            velocity.y = Mathf.Sqrt(2f * 10 * 50);
+                            m_jumpBool = false;
+                        }
+                        // jump to the position on the Right side of the boss room
+                        velocity.y += -50 * Time.deltaTime;
+                        velocity.x = 30;
+                        m_controller.move(velocity * Time.deltaTime);
+                        m_jumpTimer += Time.deltaTime;
+                        // if we've reached the side, prepare to jump to the other side
+                        if (this.transform.position.x > m_rightJumpPosition.x)
+                        {
+                            m_jumpRight = false;
+                            m_jumpLeft = true;
+                            m_jumpBool = true;
+                            m_jumpTimer = 0;
+                            m_jumpDelay = 0;
+                        }
                     }
-
                 }
                 else if (m_jumpLeft)
                 {
+
                     // delay the jump to the other side by 2 seconds
                     m_jumpDelay += Time.deltaTime;
                     if (m_jumpDelay > 2)
                     {
-                        this.transform.position = CalculateBezierPoint(m_jumpTimer / 2f, this.transform.position, m_leftJumpPosition, m_controlPosition);
+                        if (m_jumpBool)
+                        {
+                            velocity.y = Mathf.Sqrt(2f * 10 * 50);
+                            m_jumpBool = false;
+                        }
+                        velocity.x = -30;
+
                         m_jumpTimer += Time.deltaTime;
-                        if (this.transform.position.x < m_leftJumpPosition.x)
+                        if (this.transform.position.x < m_leftJumpPosition.x && m_controller.isGrounded)
                         {
                             m_jumpLeft = false;
                             m_jumpTimer = 0;
@@ -123,6 +144,8 @@ public class JanitorBoss : MonoBehaviour
                             m_jumpDelay = 0;
                         }
                     }
+                    velocity.y -= 50 * Time.deltaTime;
+                    m_controller.move(velocity * Time.deltaTime);
                 }
                 else if (m_chasePlayer)
                 {
@@ -251,7 +274,6 @@ public class JanitorBoss : MonoBehaviour
                     m_controller.move(velocity * Time.deltaTime);
                 }
             }
-
         }
     }
 
