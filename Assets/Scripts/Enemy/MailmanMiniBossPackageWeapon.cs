@@ -23,7 +23,7 @@ public class MailmanMiniBossPackageWeapon : MonoBehaviour {
             // thrown toward the player's position. 
             GameObject projectile1 = (GameObject)Instantiate(projectilePrefab, this.transform.position, Quaternion.identity);
             // mid point of start and end X plus more Y
-            Vector3 controlPosition = new Vector3((this.transform.position.x + playerPosition.x) / 2, this.transform.position.y + 20, 0);
+            Vector3 controlPosition = new Vector3((this.transform.position.x + playerPosition.x) / 2, this.transform.position.y + 10, 0);
             projectile1.gameObject.GetComponent<PackageProjectile>().SetBezeierInformation(1.5f, this.transform.position, playerPosition, controlPosition);
 
             int rand = Random.Range(1, 11);
@@ -31,7 +31,7 @@ public class MailmanMiniBossPackageWeapon : MonoBehaviour {
             {
                 GameObject projectile2 = (GameObject)Instantiate(projectilePrefab, this.transform.position, Quaternion.identity);
 
-                Vector3 controlPosition2 = new Vector3((this.transform.position.x + playerPosition.x) / 2, this.transform.position.y + 15, 0);
+                Vector3 controlPosition2 = new Vector3((this.transform.position.x + playerPosition.x) / 2, this.transform.position.y + 8, 0);
                 // offset location package is thrown.
                 projectile2.gameObject.GetComponent<PackageProjectile>().SetBezeierInformation(1.25f, this.transform.position, playerPosition+new Vector3(5,0,0),
                     controlPosition2);
@@ -40,7 +40,7 @@ public class MailmanMiniBossPackageWeapon : MonoBehaviour {
             {
                 GameObject projectile3 = (GameObject)Instantiate(projectilePrefab, this.transform.position, Quaternion.identity);
 
-                Vector3 controlPosition3 = new Vector3((this.transform.position.x + playerPosition.x) / 2, this.transform.position.y + 15, 0);
+                Vector3 controlPosition3 = new Vector3((this.transform.position.x + playerPosition.x) / 2, this.transform.position.y + 9, 0);
                 // offset location package is thrown.
                 projectile3.gameObject.GetComponent<PackageProjectile>().SetBezeierInformation(1f, this.transform.position, playerPosition + new Vector3(-3, 0, 0),
                     controlPosition3);

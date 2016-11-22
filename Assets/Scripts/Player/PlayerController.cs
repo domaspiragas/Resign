@@ -23,12 +23,10 @@ public class PlayerController : MonoBehaviour
     // if true we're changing melee, if false we're changing ranged
     private bool m_toggleMelee = true;
     //health/roll/lives ui
-    private GameObject m_healthUI;
-    private GameObject m_rollUI;
     private GameObject m_livesUI;
-    private GameObject m_toggleUI;
     private GameObject m_meleeUI;
     private GameObject m_rangedUI;
+    private GameObject m_playerHealthText;
     //object for raycasting
     private PlayerCharacterController2D m_controller;
     //object for animations
@@ -70,11 +68,15 @@ public class PlayerController : MonoBehaviour
     private string m_rangeAnim;
     private string m_climbAnim;
 
-    //reference to the main camera
+    // reference to the main camera
     public GameObject playerCamera;
-    public GameObject meleeWeapon;
-    public GameObject rangedWeapon;
-
+    // player's health bar
+    public GameObject healthBar;
+    // the UI stamina orbs
+    public GameObject[] staminaOrbs = new GameObject[3];
+    // Weapon UI 
+    public GameObject meleeWeaponUI;
+    public GameObject rangedWeaponUI;
     /* ADJUSTABLE IN UNITY VALUES */
 
     public float maxHealth = 100f;
@@ -117,12 +119,13 @@ public class PlayerController : MonoBehaviour
         m_playerHealth = maxHealth;
         m_rollCount = maxRollCount;
         //get the health ui object
-        m_healthUI = GameObject.Find("PlayerHealth");
-        m_rollUI = GameObject.Find("RollCount");
         m_livesUI = GameObject.Find("Lives");
-        m_toggleUI = GameObject.Find("Toggle");
         m_meleeUI = GameObject.Find("Melee");
         m_rangedUI = GameObject.Find("Ranged");
+        m_playerHealthText = GameObject.Find("PlayerHealth");
+        //make sure the correct health/roll values are displayed. 
+        UpdateHealthUI();
+        UpdateRollUI();
 
     }
 
@@ -722,11 +725,37 @@ public class PlayerController : MonoBehaviour
     }
     private void UpdateHealthUI()
     {
-        m_healthUI.GetComponent<Text>().text = "" + m_playerHealth;
+        healthBar.transform.localScale = new Vector3(m_playerHealth / maxHealth, healthBar.transform.localScale.y, 0);
+        m_playerHealthText.GetComponent<Text>().text = "" + m_playerHealth + " / " + maxHealth;
     }
+    // Sets the orb to active depending on how many rolls the player has available. 
     private void UpdateRollUI()
     {
-        m_rollUI.GetComponent<Text>().text = "" + m_rollCount;
+        if (m_rollCount == 3)
+        {
+            staminaOrbs[0].SetActive(true);
+            staminaOrbs[1].SetActive(true);
+            staminaOrbs[2].SetActive(true);
+        }
+        else if (m_rollCount == 2)
+        {
+            staminaOrbs[0].SetActive(true);
+            staminaOrbs[1].SetActive(true);
+            staminaOrbs[2].SetActive(false);
+        }
+        else if (m_rollCount == 1)
+        {
+            staminaOrbs[0].SetActive(true);
+            staminaOrbs[1].SetActive(false);
+            staminaOrbs[2].SetActive(false);
+        }
+        else
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                staminaOrbs[i].SetActive(false);
+            }
+        }
     }
     private void UpdateLivesUI()
     {
@@ -734,21 +763,27 @@ public class PlayerController : MonoBehaviour
     }
     private void UpdateRangedUI()
     {
-        m_rangedUI.GetComponent<Text>().text = "R" + m_curRangedWeapon;
+        //m_rangedUI.GetComponent<Text>().text = "R" + m_curRangedWeapon;
+        rangedWeaponUI.gameObject.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = rangedWeaponUI.gameObject.GetComponent<WeaponUISpriteStorage>().weapons[m_curRangedWeapon];
     }
     private void UpdateMeleeUI()
     {
-        m_meleeUI.GetComponent<Text>().text = "M" + m_curMeleeWeapon;
+        //m_meleeUI.GetComponent<Text>().text = "M" + m_curMeleeWeapon;
+        meleeWeaponUI.gameObject.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = meleeWeaponUI.gameObject.GetComponent<WeaponUISpriteStorage>().weapons[m_curMeleeWeapon];
     }
     private void UpdateToggleUI()
     {
         if (m_toggleMelee)
         {
-            m_toggleUI.GetComponent<Text>().text = "M";
+            meleeWeaponUI.gameObject.GetComponent<Image>().sprite = meleeWeaponUI.gameObject.GetComponent<WeaponUISpriteStorage>().selectedBackground;
+            rangedWeaponUI.gameObject.GetComponent<Image>().sprite = rangedWeaponUI.gameObject.GetComponent<WeaponUISpriteStorage>().unselectedBackground;
         }
         else
         {
-            m_toggleUI.GetComponent<Text>().text = "R";
+            // set melee box to unselected
+            meleeWeaponUI.gameObject.GetComponent<Image>().sprite = meleeWeaponUI.gameObject.GetComponent<WeaponUISpriteStorage>().unselectedBackground;
+            // set ranged box to selected
+            rangedWeaponUI.gameObject.GetComponent<Image>().sprite = rangedWeaponUI.gameObject.GetComponent<WeaponUISpriteStorage>().selectedBackground;
         }
     }
     public bool IsClimbing()
