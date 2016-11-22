@@ -19,6 +19,7 @@ public class MailmanEnemy : MonoBehaviour {
     private CharacterController2D m_controller;
     private AnimationController2D m_animator;
 
+    // handles enemy movement 
     private bool m_followPlayer = false;
     private Vector3 m_startingPosition;
     private Vector3 m_playerPosition;
@@ -26,6 +27,10 @@ public class MailmanEnemy : MonoBehaviour {
     private bool m_pushedBack = false;
     private float m_pushbackTimer;
     private bool m_patrol;
+
+    // handles flashing red when taking damage
+    private bool m_redFlash;
+    private float m_redFlashTimer;
 
 
     private float m_health;
@@ -128,6 +133,16 @@ public class MailmanEnemy : MonoBehaviour {
                 velocity.x = -pushbackSpeed;
             }
         }
+        // handles flashing red when damage has been taken
+        if (m_redFlash)
+        {
+            if (m_redFlashTimer > .10f)
+            {
+                this.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                m_redFlash = false;
+            }
+            m_redFlashTimer += Time.deltaTime;
+        }
         if (m_pushbackTimer < Time.time)
         {
             m_pushedBack = false;
@@ -141,6 +156,10 @@ public class MailmanEnemy : MonoBehaviour {
     {
         m_health -= damage;
         UpdateHealthUI();
+        // flash red and start timer
+        this.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+        m_redFlash = true;
+        m_redFlashTimer = 0;
     }
 
     public void SetFollowPlayer(bool follow)

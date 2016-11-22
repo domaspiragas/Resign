@@ -30,6 +30,10 @@ public class RatEnemy : MonoBehaviour {
     private bool m_patrol;
 
     private float m_health;
+
+    // used for handling red flash when taking damage
+    private bool m_redFlash;
+    private float m_redFlashTimer;
     // Use this for initialization
     void Start()
     {
@@ -97,6 +101,16 @@ public class RatEnemy : MonoBehaviour {
                 }
             }
         }
+        // handles flashing red when damage has been taken
+        if (m_redFlash)
+        {
+            if (m_redFlashTimer > .10f)
+            {
+                this.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                m_redFlash = false;
+            }
+            m_redFlashTimer += Time.deltaTime;
+        }
         if (m_meleeAttack)
         {
             if (m_meleeTimer < Time.time)
@@ -113,6 +127,10 @@ public class RatEnemy : MonoBehaviour {
     {
         m_health -= damage;
         UpdateHealthUI();
+        // flash red and start timer
+        this.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+        m_redFlash = true;
+        m_redFlashTimer = 0;
     }
 
     public void SetFollowPlayer(bool follow)

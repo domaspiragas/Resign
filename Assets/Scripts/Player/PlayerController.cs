@@ -48,9 +48,12 @@ public class PlayerController : MonoBehaviour
     private bool m_touchingClimbable = false;
     private bool m_touchingStairway = false;
     private bool m_isClimbing = false;
+    private bool m_redFlash = false;
 
     //melee animation timer
     private float m_meleeTimer = 0;
+    //timer for red take damage flash
+    private float m_redFlashTimer = 0;
     //roll cooldown
     private float m_rollTimer = 0;
     private float m_rollCooldownTimestamp;
@@ -134,6 +137,7 @@ public class PlayerController : MonoBehaviour
             HandleInteract();
             HandleToggleChangeWeapon();
             HandleChangeWeapon();
+            HandleRedDamageFlash();
         }
     }
 
@@ -507,6 +511,10 @@ public class PlayerController : MonoBehaviour
     {
         m_playerHealth -= damage;
         UpdateHealthUI();
+        // flash red and start timer
+        this.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+        m_redFlash = true;
+        m_redFlashTimer = 0;
     }
 
     public void PickUpHealth(float health)
@@ -565,6 +573,20 @@ public class PlayerController : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Q))
         {
             ChangeWeapon(false);
+        }
+    }
+    // handles flashing red when damage has been taken
+    private void HandleRedDamageFlash()
+    {
+
+        if (m_redFlash)
+        {
+            if (m_redFlashTimer > .10f)
+            {
+                this.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                m_redFlash = false;
+            }
+            m_redFlashTimer += Time.deltaTime;
         }
     }
     // The parameter determines whether you're cycling right or not through the list

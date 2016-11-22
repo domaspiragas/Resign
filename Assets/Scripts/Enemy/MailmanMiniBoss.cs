@@ -26,6 +26,10 @@ public class MailmanMiniBoss : MonoBehaviour
     private GameObject m_healthUI;
 
     private float m_health;
+
+    // for handling flashing red when taking damage
+    private bool m_redFlash;
+    private float m_redFlashTimer;
     // Use this for initialization
     void Start()
     {
@@ -77,6 +81,16 @@ public class MailmanMiniBoss : MonoBehaviour
             }
 
         }
+        // handles flashing red when damage has been taken
+        if (m_redFlash)
+        {
+            if (m_redFlashTimer > .10f)
+            {
+                this.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                m_redFlash = false;
+            }
+            m_redFlashTimer += Time.deltaTime;
+        }
         velocity.y += -30 * Time.deltaTime;
         m_controller.move(velocity * Time.deltaTime);
     }
@@ -85,6 +99,10 @@ public class MailmanMiniBoss : MonoBehaviour
     {
         m_health -= damage;
         UpdateHealthUI();
+        // flash red and start timer
+        this.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+        m_redFlash = true;
+        m_redFlashTimer = 0;
     }
 
     public void SetFollowPlayer(bool follow)
