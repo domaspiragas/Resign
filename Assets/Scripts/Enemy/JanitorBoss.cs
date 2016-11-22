@@ -245,11 +245,13 @@ public class JanitorBoss : MonoBehaviour
                         {
                             m_sweepLeft = false;
                             m_sweepRight = true;
+                            m_animator.setFacing("Right");
+                            m_animator.setAnimation(m_idle);
                         }
                     }
                     else if (m_sweepRight)
                     {
-                        //TODO : add sweep animation here.
+
                         m_animator.setAnimation(m_sweep);
                         m_animator.setFacing("Right");
                         velocity.x = sweepSpeed;
@@ -258,7 +260,9 @@ public class JanitorBoss : MonoBehaviour
                             m_sweepRight = false;
                             m_sweepAttack = false;
                             m_whatNext = true;
-                            // TODO: Idle Animation here
+                            m_animator.setFacing("Left");
+                            m_animator.setAnimation(m_idle);
+
                         }
                     }
                     velocity.y += -50 * Time.deltaTime;
