@@ -43,6 +43,10 @@ public class StarterBagWeapon : MonoBehaviour {
         {
             col.gameObject.GetComponent<MailmanMiniBoss>().TakeDamage(damage);
         }
+        else if (col.tag == "MailmanEnemy")
+        {
+            col.gameObject.GetComponent<MailmanEnemy>().TakeDamage(damage);
+        }
         else if (col.tag == "JanitorBoss")
         {
             col.gameObject.GetComponent<JanitorBoss>().TakeDamage(damage);
