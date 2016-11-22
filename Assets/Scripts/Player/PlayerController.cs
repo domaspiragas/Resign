@@ -63,8 +63,7 @@ public class PlayerController : MonoBehaviour
     //Current Animations TODO: UPDATE TO real starting animation names
     private string m_idleAnim = "Idle";
     private string m_rollAnim = "OldRoll";
-    private string m_leftWalkAnim;
-    private string m_rightWalkAnim;
+    private string m_run = "Run";
     private string m_meleeAnim;
     private string m_rangeAnim;
     private string m_climbAnim;
@@ -297,6 +296,8 @@ public class PlayerController : MonoBehaviour
                     }
                     //used to determine direction of animation, and roll
                     m_animator.setFacing("Right");
+                    //TODO: probably not the right place for this
+                    m_animator.setAnimation(m_run);
                 }
                 // A runs left
                 else if (Input.GetKey(KeyCode.A))
@@ -317,6 +318,8 @@ public class PlayerController : MonoBehaviour
 
                     //used to determine direction of animation, and roll
                     m_animator.setFacing("Left");
+                    //TODO: probably not the right place for this
+                    m_animator.setAnimation(m_run);
                 }
                 // Space Jumps if player is on the ground or is on a climbable object
                 if (Input.GetKeyDown(KeyCode.Space) && (m_controller.isGrounded || m_isClimbing))
@@ -346,8 +349,11 @@ public class PlayerController : MonoBehaviour
                     velocity.y = movementSpeed;
                 }
 
-                // idle animations
-                m_animator.setAnimation(m_idleAnim);
+                if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
+                {
+                    // idle animations
+                    m_animator.setAnimation(m_idleAnim);
+                }
             }
             // Move while attacking in air.
             else if (!m_controller.isGrounded)

@@ -38,7 +38,12 @@ public class JanitorBoss : MonoBehaviour
     private float m_chasePlayerTimer;
     private float m_trapCoolDown;
 
-
+    //Animations
+    private string m_idle = "janitor_walk";
+    private string m_attack = "janitor_attack";
+    private string m_jump = "janitor_jump";
+    private string m_walk = "janitor_walk";
+    private string m_sweep = "janitor_walk";
 
 
 
@@ -103,6 +108,8 @@ public class JanitorBoss : MonoBehaviour
                         if (m_jumpBool)
                         {
                             velocity.y = Mathf.Sqrt(2f * 10 * 50);
+                            m_animator.setAnimation(m_jump);
+                            m_animator.setFacing("Right");
                             m_jumpBool = false;
                         }
                         // jump to the position on the Right side of the boss room
@@ -113,6 +120,8 @@ public class JanitorBoss : MonoBehaviour
                         // if we've reached the side, prepare to jump to the other side
                         if (this.transform.position.x > m_rightJumpPosition.x)
                         {
+                            m_animator.setAnimation(m_idle);
+                            m_animator.setFacing("Left");
                             m_jumpRight = false;
                             m_jumpLeft = true;
                             m_jumpBool = true;
@@ -131,6 +140,8 @@ public class JanitorBoss : MonoBehaviour
                         if (m_jumpBool)
                         {
                             velocity.y = Mathf.Sqrt(2f * 10 * 50);
+                            m_animator.setAnimation(m_jump);
+                            m_animator.setFacing("Left");
                             m_jumpBool = false;
                         }
                         velocity.x = -30;
@@ -138,6 +149,8 @@ public class JanitorBoss : MonoBehaviour
                         m_jumpTimer += Time.deltaTime;
                         if (this.transform.position.x < m_leftJumpPosition.x && m_controller.isGrounded)
                         {
+                            m_animator.setAnimation(m_idle);
+                            m_animator.setFacing("Right");
                             m_jumpLeft = false;
                             m_jumpTimer = 0;
                             m_whatNext = true;
@@ -161,7 +174,7 @@ public class JanitorBoss : MonoBehaviour
 
                         if (m_meleeWeapon.Swing(Time.time))
                         {
-                            m_animator.setAnimation("MovingEnemyMelee");
+                            m_animator.setAnimation(m_attack);
                             m_meleeAttack = true;
                             m_meleeTimer = Time.time + (m_meleeWeapon.attackDelay + m_meleeWeapon.attackDuration);
                         }
@@ -172,7 +185,7 @@ public class JanitorBoss : MonoBehaviour
 
                         if (m_meleeWeapon.Swing(Time.time))
                         {
-                            m_animator.setAnimation("MovingEnemyMelee");
+                            m_animator.setAnimation(m_attack);
                             m_meleeAttack = true;
                             m_meleeTimer = Time.time + (m_meleeWeapon.attackDelay + m_meleeWeapon.attackDuration);
                         }
@@ -181,11 +194,13 @@ public class JanitorBoss : MonoBehaviour
                     {
                         velocity.x = -speed;
                         m_animator.setFacing("Left");
+                        m_animator.setAnimation(m_walk);
                     }
                     else if (!m_meleeAttack)
                     {
                         velocity.x = speed;
                         m_animator.setFacing("Right");
+                        m_animator.setAnimation(m_walk);
                     }
 
                     if (m_meleeAttack)
@@ -193,13 +208,13 @@ public class JanitorBoss : MonoBehaviour
                         if (m_meleeTimer < Time.time)
                         {
                             m_meleeAttack = false;
-                            m_animator.setAnimation("MovingEnemyIdle");
+                            m_animator.setAnimation(m_idle);
                         }
                     }
                     if (m_chasePlayerTimer > 10)
                     {
                         m_meleeAttack = false;
-                        m_animator.setAnimation("MovingEnemyIdle");
+                        m_animator.setAnimation(m_walk);
                         m_chasePlayerTimer = 0;
                         m_chasePlayer = false;
                         m_whatNext = true;
@@ -223,6 +238,7 @@ public class JanitorBoss : MonoBehaviour
                     if (m_sweepLeft)
                     {
                         //TODO : add sweep animation here.
+                        m_animator.setAnimation(m_sweep);
                         m_animator.setFacing("Left");
                         velocity.x = -sweepSpeed;
                         if (this.transform.position.x <= m_leftJumpPosition.x)
@@ -234,6 +250,7 @@ public class JanitorBoss : MonoBehaviour
                     else if (m_sweepRight)
                     {
                         //TODO : add sweep animation here.
+                        m_animator.setAnimation(m_sweep);
                         m_animator.setFacing("Right");
                         velocity.x = sweepSpeed;
                         if (this.transform.position.x >= m_rightJumpPosition.x)
