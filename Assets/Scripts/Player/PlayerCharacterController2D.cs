@@ -490,7 +490,7 @@ public class PlayerCharacterController2D : MonoBehaviour {
         // if we are moving we should ignore the layers in oneWayPlatformMask
         //CUSTOM: Changed isGoingUp to IsClimbing.
         var mask = platformMask;
-        if (m_playerController.IsClimbing() || ignoreOneWayPlatformsThisFrame)
+        if (m_playerController.IsClimbing() || ignoreOneWayPlatformsThisFrame || isGoingUp)
             mask &= ~oneWayPlatformMask;
 
         for (var i = 0; i < totalVerticalRays; i++)
