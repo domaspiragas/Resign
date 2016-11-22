@@ -12,6 +12,7 @@ public class MailmanMiniBoss : MonoBehaviour
     public GameObject packageRangedWeapon;
     public GameObject healthPickUp;
     public GameObject healthBar;
+    public GameObject weaponPrefab;
 
     private MailmanMiniBossPackageWeapon m_packageWeapon;
     private MailmanMinibossBagWeapon m_bagWeapon;
@@ -122,6 +123,7 @@ public class MailmanMiniBoss : MonoBehaviour
             {
                 DropHealth();
             }
+            DropWeapon();
             Destroy(gameObject);
         }
     }
@@ -135,6 +137,11 @@ public class MailmanMiniBoss : MonoBehaviour
         }
     }
 
+    private void DropWeapon()
+    {
+        GameObject weapon = (GameObject)Instantiate(weaponPrefab, this.transform.position, Quaternion.identity);
+        weapon.gameObject.GetComponent<WeaponPickup>().AssignLobDirection(Random.Range(-.3f, .3f));
+    }
     private void UpdateHealthUI()
     {
         healthBar.transform.localScale = new Vector3((m_health / health), healthBar.transform.localScale.y, 0);

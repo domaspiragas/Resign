@@ -15,8 +15,8 @@ public class PlayerController : MonoBehaviour
     private RangedWeapon m_starterWeapon;
 
     //Keep track of whether or not we own a weapon
-    private bool[] m_ownMeleeWeapon = { true, true, false, false };
-    private bool[] m_ownRangedWeapon = { true, true, false, false };
+    private bool[] m_ownMeleeWeapon = { true, false, false, false };
+    private bool[] m_ownRangedWeapon = { true, false, false, false };
     // Our current weapon
     private int m_curMeleeWeapon = 0;
     private int m_curRangedWeapon = 0;
@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour
     private bool m_touchingStairway = false;
     private bool m_isClimbing = false;
     private bool m_redFlash = false;
-
+    private bool m_touchingWeapon = false;
     //melee animation timer
     private float m_meleeTimer = 0;
     //timer for red take damage flash
@@ -59,6 +59,7 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 m_stairwayDestionation;
 
+    private Collider2D m_weaponPickup;
     //Current Animations TODO: UPDATE TO real starting animation names
     private string m_idleAnim = "Idle";
     private string m_rollAnim = "OldRoll";
@@ -141,6 +142,7 @@ public class PlayerController : MonoBehaviour
             HandleToggleChangeWeapon();
             HandleChangeWeapon();
             HandleRedDamageFlash();
+            HandlePickUpWeapon();
         }
     }
 
@@ -172,6 +174,11 @@ public class PlayerController : MonoBehaviour
         else if (col.tag == "RespawnPoint")
         {
             m_respawnPoint = col.gameObject.GetComponent<RespawnPoint>().GetPosition();
+        }
+        else if (col.tag == "WeaponPickup")
+        {
+            m_touchingWeapon = true;
+            m_weaponPickup = col;
         }
         /* Section for taking Damage*/
         if (!m_roll)
@@ -248,6 +255,10 @@ public class PlayerController : MonoBehaviour
         else if (col.tag == "Stairway")
         {
             m_touchingStairway = false;
+        }
+        else if (col.tag == "WeaponPickup")
+        {
+            m_touchingWeapon = false;
         }
     }
     // Handles the players movement (Left and Right).
@@ -578,6 +589,22 @@ public class PlayerController : MonoBehaviour
             ChangeWeapon(false);
         }
     }
+    private void HandlePickUpWeapon()
+    {
+        if (Input.GetKeyDown(KeyCode.F) && m_touchingWeapon)
+        {
+            if (m_weaponPickup.gameObject.GetComponent<WeaponPickup>().meleeOrRanged == "melee")            
+            {
+                m_ownMeleeWeapon[m_weaponPickup.gameObject.GetComponent<WeaponPickup>().index] = true;
+            }
+            else
+            {
+                m_ownRangedWeapon[m_weaponPickup.gameObject.GetComponent<WeaponPickup>().index] = true;
+            }
+            Destroy(m_weaponPickup.gameObject);
+        }
+
+    }
     // handles flashing red when damage has been taken
     private void HandleRedDamageFlash()
     {
@@ -763,12 +790,12 @@ public class PlayerController : MonoBehaviour
     }
     private void UpdateRangedUI()
     {
-        //m_rangedUI.GetComponent<Text>().text = "R" + m_curRangedWeapon;
+        //The weapon sprite is a child of the border, so we access the child to change it.
         rangedWeaponUI.gameObject.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = rangedWeaponUI.gameObject.GetComponent<WeaponUISpriteStorage>().weapons[m_curRangedWeapon];
     }
     private void UpdateMeleeUI()
     {
-        //m_meleeUI.GetComponent<Text>().text = "M" + m_curMeleeWeapon;
+        //The weapon sprite is a child of the border, so we access the child to change it.
         meleeWeaponUI.gameObject.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = meleeWeaponUI.gameObject.GetComponent<WeaponUISpriteStorage>().weapons[m_curMeleeWeapon];
     }
     private void UpdateToggleUI()

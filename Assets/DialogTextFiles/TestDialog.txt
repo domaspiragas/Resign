@@ -1,5 +1,7 @@
-This is the first line of the test dialog.
-Second line of the test dialog for testing the test test something more test.
-Then we have a third line of the test dialog for more testing.
-then...
-another line of testing for test test testing more test words.
+Normally this would be where we explain how to play the game...
+but...
+We don't have much time, so I'll just tell you very quickly.
+A = Move Left, D = Move Right, Space = Jump, Shift = Roll, Left Mouse = Ranged Attack, Right Mouse = Melee Attack, Tab = Toggle between swapping Melee and Ranged, Q = Toggle Selected weapon left, E = Toggle Selected Weapon Right, F = Interact button
+Got that? 
+No?
+Uhh.. Sorry, I've got to go. Have fun!
