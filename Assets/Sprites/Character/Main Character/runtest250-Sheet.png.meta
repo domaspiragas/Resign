@@ -1,17 +1,17 @@
 fileFormatVersion: 2
-guid: af655d5bb6f5bdb47a5e3612e48de85e
-timeCreated: 1479831983
+guid: 5d5be591864e34f30b345cb42100ac01
+timeCreated: 1479843930
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: runtest-Sheet_0
-    21300002: runtest-Sheet_1
-    21300004: runtest-Sheet_2
-    21300006: runtest-Sheet_3
-    21300008: runtest-Sheet_4
-    21300010: runtest-Sheet_5
-    21300012: runtest-Sheet_6
-    21300014: runtest-Sheet_7
+    21300000: runtest250-Sheet_0
+    21300002: runtest250-Sheet_1
+    21300004: runtest250-Sheet_2
+    21300006: runtest250-Sheet_3
+    21300008: runtest250-Sheet_4
+    21300010: runtest250-Sheet_5
+    21300012: runtest250-Sheet_6
+    21300014: runtest250-Sheet_7
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -61,104 +61,104 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: runtest-Sheet_0
+      name: runtest250-Sheet_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 90.25
-        height: 114
+        x: 1
+        y: 8
+        width: 130
+        height: 189
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: runtest-Sheet_1
+      name: runtest250-Sheet_1
       rect:
         serializedVersion: 2
-        x: 90
-        y: 0
-        width: 90.25
-        height: 114
+        x: 168
+        y: 16
+        width: 157
+        height: 183
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: runtest-Sheet_2
+      name: runtest250-Sheet_2
       rect:
         serializedVersion: 2
-        x: 180
-        y: 0
-        width: 90.25
-        height: 114
+        x: 352
+        y: 5
+        width: 154
+        height: 192
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: runtest-Sheet_3
+      name: runtest250-Sheet_3
       rect:
         serializedVersion: 2
-        x: 270
-        y: 0
-        width: 90.25
-        height: 114
+        x: 581
+        y: 2
+        width: 87
+        height: 195
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: runtest-Sheet_4
+      name: runtest250-Sheet_4
       rect:
         serializedVersion: 2
-        x: 360
-        y: 0
-        width: 90.25
-        height: 114
+        x: 735
+        y: 5
+        width: 135
+        height: 194
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: runtest-Sheet_5
+      name: runtest250-Sheet_5
       rect:
         serializedVersion: 2
-        x: 450
-        y: 0
-        width: 90.25
-        height: 114
+        x: 911
+        y: 16
+        width: 156
+        height: 181
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: runtest-Sheet_6
+      name: runtest250-Sheet_6
       rect:
         serializedVersion: 2
-        x: 540
+        x: 1097
         y: 0
-        width: 90.25
-        height: 114
+        width: 151
+        height: 197
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: runtest-Sheet_7
+      name: runtest250-Sheet_7
       rect:
         serializedVersion: 2
-        x: 630
+        x: 1326
         y: 0
-        width: 90.25
-        height: 114
+        width: 92
+        height: 197
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
