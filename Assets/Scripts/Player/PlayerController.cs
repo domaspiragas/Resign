@@ -138,8 +138,7 @@ public class PlayerController : MonoBehaviour
             HandleRoll();
             HandleAttack();
             HandleInteract();
-            HandleToggleChangeWeapon();
-            HandleChangeWeapon();
+            ChangeWeapon();
             HandleRedDamageFlash();
             HandlePickUpWeapon();
         }
@@ -576,30 +575,30 @@ public class PlayerController : MonoBehaviour
         }
     }
     // Swap from changing melee to changing ranged.
-    private void HandleToggleChangeWeapon()
-    {
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            m_toggleMelee = !m_toggleMelee;
-            UpdateToggleUI();
-        }
-    }
-    private void HandleChangeWeapon()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            ChangeWeapon(true);
-        }
-        else if (Input.GetKeyDown(KeyCode.Q))
-        {
-            ChangeWeapon(false);
-        }
-    }
+    //private void HandleToggleChangeWeapon()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Tab))
+    //    {
+    //        m_toggleMelee = !m_toggleMelee;
+    //        UpdateToggleUI();
+    //    }
+    //}
+    //private void HandleChangeWeapon()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.E))
+    //    {
+    //        ChangeWeapon(true);
+    //    }
+    //    else if (Input.GetKeyDown(KeyCode.Q))
+    //    {
+    //        ChangeWeapon(false);
+    //    }
+    //}
     private void HandlePickUpWeapon()
     {
         if (Input.GetKeyDown(KeyCode.F) && m_touchingWeapon)
         {
-            if (m_weaponPickup.gameObject.GetComponent<WeaponPickup>().meleeOrRanged == "melee")            
+            if (m_weaponPickup.gameObject.GetComponent<WeaponPickup>().meleeOrRanged == "melee")
             {
                 m_ownMeleeWeapon[m_weaponPickup.gameObject.GetComponent<WeaponPickup>().index] = true;
             }
@@ -625,129 +624,146 @@ public class PlayerController : MonoBehaviour
             m_redFlashTimer += Time.deltaTime;
         }
     }
-    // The parameter determines whether you're cycling right or not through the list
-    private void ChangeWeapon(bool right)
+    //Swap weapons.
+    private void ChangeWeapon()
     {
-        // Change melee weapon
-        if (m_toggleMelee)
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            int temp = m_curMeleeWeapon;
-            if (right)
+            if(m_ownRangedWeapon[1] && m_curRangedWeapon == 0)
             {
-                // Look for the next weapon we have to the right
-                while (!m_ownMeleeWeapon[temp + 1] && temp + 1 <= 3)
-                {
-                    if (temp + 1 == 3)
-                    {
-                        // if we're at the end with no weapon found we just equip the starting weapon
-                        m_curMeleeWeapon = 0;
-                        LoadWeapon(0);
-                        return;
-                    }
-                    temp++;
-                }
-                // Equip the new weapon
-                m_curMeleeWeapon = temp + 1;
-                LoadWeapon(temp + 1);
+                m_curRangedWeapon++;
             }
-            else
+            else if(m_curRangedWeapon == 1)
             {
-                if (temp == 0)
-                {
-                    temp = 4;
-                }
-                // Look for the next weapon we have to the left
-                while (!m_ownMeleeWeapon[temp - 1] && temp - 1 >= 0)
-                {
-                    temp--;
-                }
-                m_curMeleeWeapon = temp - 1;
-                LoadWeapon(temp - 1);
+                m_curRangedWeapon--;
             }
-        }
-        //Change Ranged Weapon
-        else
-        {
-            int temp = m_curRangedWeapon;
-            if (right)
-            {
-                // Look for the next weapon we have to the right
-                while (!m_ownRangedWeapon[temp + 1] && temp + 1 <= 3)
-                {
-                    if (temp + 1 == 3)
-                    {
-                        // if we're at the end with no weapon found we just equip the starting weapon
-                        m_curRangedWeapon = 0;
-                        LoadWeapon(0);
-                        return;
-                    }
-                    temp++;
-                }
-                // Equip the new weapon
-                m_curRangedWeapon = temp + 1;
-
-                LoadWeapon(temp + 1);
-            }
-            else
-            {
-                if (temp == 0)
-                {
-                    temp = 4;
-                }
-                // Look for the next weapon we have to the left
-                while (!m_ownRangedWeapon[temp - 1] && temp - 1 >= 0)
-                {
-                    temp--;
-                }
-                m_curRangedWeapon = temp - 1;
-                LoadWeapon(temp - 1);
-            }
-        }
-    }
-    // For loading animations
-    private void LoadWeapon(int index)
-    {
-        // Change Melee Weapon
-        if (m_toggleMelee)
-        {
-            UpdateMeleeUI();
-            switch (index)
-            {
-                //ShoulderBag
-                case 0:
-                    break;
-                //Mop
-                case 1:
-                    break;
-                //TBD
-                case 2:
-                    break;
-                //Mouse
-                case 3:
-                    break;
-            }
-        }
-        //Change Ranged Weapon
-        else
-        {
             UpdateRangedUI();
-            switch (index)
-            {
-                //Starter
-                case 0:
-                    break;
-                //MailBag
-                case 1:
-                    break;
-                //TBD
-                case 2:
-                    break;
-                //TBD
-                case 3:
-                    break;
-            }
         }
+
     }
+    // The parameter determines whether you're cycling right or not through the list
+    //private void ChangeWeapon(bool right)
+    //{
+    //    // Change melee weapon
+    //    if (m_toggleMelee)
+    //    {
+    //        int temp = m_curMeleeWeapon;
+    //        if (right)
+    //        {
+    //            // Look for the next weapon we have to the right
+    //            while (!m_ownMeleeWeapon[temp + 1] && temp + 1 <= 3)
+    //            {
+    //                if (temp + 1 == 3)
+    //                {
+    //                    // if we're at the end with no weapon found we just equip the starting weapon
+    //                    m_curMeleeWeapon = 0;
+    //                    LoadWeapon(0);
+    //                    return;
+    //                }
+    //                temp++;
+    //            }
+    //            // Equip the new weapon
+    //            m_curMeleeWeapon = temp + 1;
+    //            LoadWeapon(temp + 1);
+    //        }
+    //        else
+    //        {
+    //            if (temp == 0)
+    //            {
+    //                temp = 4;
+    //            }
+    //            // Look for the next weapon we have to the left
+    //            while (!m_ownMeleeWeapon[temp - 1] && temp - 1 >= 0)
+    //            {
+    //                temp--;
+    //            }
+    //            m_curMeleeWeapon = temp - 1;
+    //            LoadWeapon(temp - 1);
+    //        }
+    //    }
+    //    //Change Ranged Weapon
+    //    else
+    //    {
+    //        int temp = m_curRangedWeapon;
+    //        if (right)
+    //        {
+    //            // Look for the next weapon we have to the right
+    //            while (!m_ownRangedWeapon[temp + 1] && temp + 1 <= 3)
+    //            {
+    //                if (temp + 1 == 3)
+    //                {
+    //                    // if we're at the end with no weapon found we just equip the starting weapon
+    //                    m_curRangedWeapon = 0;
+    //                    LoadWeapon(0);
+    //                    return;
+    //                }
+    //                temp++;
+    //            }
+    //            // Equip the new weapon
+    //            m_curRangedWeapon = temp + 1;
+
+    //            LoadWeapon(temp + 1);
+    //        }
+    //        else
+    //        {
+    //            if (temp == 0)
+    //            {
+    //                temp = 4;
+    //            }
+    //            // Look for the next weapon we have to the left
+    //            while (!m_ownRangedWeapon[temp - 1] && temp - 1 >= 0)
+    //            {
+    //                temp--;
+    //            }
+    //            m_curRangedWeapon = temp - 1;
+    //            LoadWeapon(temp - 1);
+    //        }
+    //    }
+    //}
+    //// For loading animations
+    //private void LoadWeapon(int index)
+    //{
+    //    // Change Melee Weapon
+    //    if (m_toggleMelee)
+    //    {
+    //        UpdateMeleeUI();
+    //        switch (index)
+    //        {
+    //            //ShoulderBag
+    //            case 0:
+    //                break;
+    //            //Mop
+    //            case 1:
+    //                break;
+    //            //TBD
+    //            case 2:
+    //                break;
+    //            //Mouse
+    //            case 3:
+    //                break;
+    //        }
+    //    }
+    //    //Change Ranged Weapon
+    //    else
+    //    {
+    //        UpdateRangedUI();
+    //        switch (index)
+    //        {
+    //            //Starter
+    //            case 0:
+    //                break;
+    //            //MailBag
+    //            case 1:
+    //                break;
+    //            //TBD
+    //            case 2:
+    //                break;
+    //            //TBD
+    //            case 3:
+    //                break;
+    //        }
+    //    }
+    //}
 
     private void RespawnPlayer()
     {

@@ -16,11 +16,14 @@ public class DialogBoxTrigger : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        if (!dialogBox.gameObject.activeSelf)
+        if (col.tag == "Player")
         {
-            m_dialogController.SetDialog(dialogText);
-            dialogImage.GetComponent<Image>().sprite = newSprite;
-            dialogBox.gameObject.SetActive(true);
+            if (!dialogBox.gameObject.activeSelf)
+            {
+                m_dialogController.SetDialog(dialogText);
+                dialogImage.GetComponent<Image>().sprite = newSprite;
+                dialogBox.gameObject.SetActive(true);
+            }
         }
     }
 
