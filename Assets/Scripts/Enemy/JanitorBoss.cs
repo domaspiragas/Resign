@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class JanitorBoss : MonoBehaviour
 {
@@ -10,7 +11,9 @@ public class JanitorBoss : MonoBehaviour
     public GameObject meleeWeapon;
     public GameObject healthPickUp;
     public GameObject waterTrap;
-
+    public GameObject healthBar;
+    public GameObject healthText;
+    public GameObject bossHealthUI;
     private JanitorMeleeWeapon m_meleeWeapon;
     private JanitorCharacterController2D m_controller;
     private AnimationController2D m_animator;
@@ -300,7 +303,15 @@ public class JanitorBoss : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        m_health -= damage;
+        if (m_health - damage < 0)
+        {
+            m_health = 0;
+        }
+        else
+        {
+            m_health -= damage;
+        }
+        UpdateHealthUI();
     }
 
     public void SetPlayerPosition(Vector3 position)
@@ -310,6 +321,7 @@ public class JanitorBoss : MonoBehaviour
     public void SetSeePlayer()
     {
         m_seePlayer = true;
+        bossHealthUI.SetActive(true);
     }
     private void CheckIfDead()
     {
@@ -319,6 +331,7 @@ public class JanitorBoss : MonoBehaviour
             {
                 DropHealth();
             }
+            bossHealthUI.SetActive(false);
             Destroy(gameObject);
         }
     }
@@ -342,5 +355,11 @@ public class JanitorBoss : MonoBehaviour
         point += t * t * endPosition;
 
         return point;
+    }
+
+    private void UpdateHealthUI()
+    {
+        healthBar.transform.localScale = new Vector3(m_health / health, healthBar.transform.localScale.y, 0);
+        healthText.GetComponent<Text>().text = "Boss " + m_health + " / " + health;
     }
 }
