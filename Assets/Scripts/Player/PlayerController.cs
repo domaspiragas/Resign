@@ -64,7 +64,7 @@ public class PlayerController : MonoBehaviour
     private string m_idleAnim = "Idle";
     private string m_rollAnim = "OldRoll";
     private string m_run = "Run";
-    private string m_meleeAnim;
+    private string m_meleeAnim = "Melee";
     private string m_rangeAnim;
     private string m_climbAnim;
 
@@ -480,7 +480,7 @@ public class PlayerController : MonoBehaviour
                         m_meleeTimer = Time.time + (m_starterBagWeapon.attackDelay + m_starterBagWeapon.attackDuration);
                         if (m_starterBagWeapon.Swing(Time.time))
                         {
-                            m_animator.setAnimation("Melee");
+                            m_animator.setAnimation(m_meleeAnim);
                         }
                         break;
                     //Mop Weapon
@@ -488,7 +488,7 @@ public class PlayerController : MonoBehaviour
                         m_meleeTimer = Time.time + (m_mopWeapon.attackDelay + m_mopWeapon.attackDuration);
                         if (m_mopWeapon.Swing(Time.time))
                         {
-                            m_animator.setAnimation("Melee");
+                            m_animator.setAnimation(m_meleeAnim);
                         }
                         break;
                     //Mouse Whip

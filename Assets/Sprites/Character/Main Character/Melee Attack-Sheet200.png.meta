@@ -1,19 +1,17 @@
 fileFormatVersion: 2
-guid: 470bdbaa3762a0641aea33d689acb22a
-timeCreated: 1481226122
+guid: 10432d168b78e435cadb974b0834060a
+timeCreated: 1481226703
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: PlayerIdle-Sheet2_0
-    21300002: PlayerIdle-Sheet2_1
-    21300004: PlayerIdle-Sheet2_2
-    21300006: PlayerIdle-Sheet2_3
-    21300008: PlayerIdle-Sheet2_4
-    21300010: PlayerIdle-Sheet2_5
-    21300012: PlayerIdle-Sheet2_6
-    21300014: PlayerIdle-Sheet2_7
-    21300016: PlayerIdle-Sheet2_8
-    21300018: PlayerIdle-Sheet2_9
+    21300000: Melee Attack-Sheet200_0
+    21300002: Melee Attack-Sheet200_1
+    21300004: Melee Attack-Sheet200_2
+    21300006: Melee Attack-Sheet200_3
+    21300008: Melee Attack-Sheet200_4
+    21300010: Melee Attack-Sheet200_5
+    21300012: Melee Attack-Sheet200_6
+    21300014: Melee Attack-Sheet200_7
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -63,130 +61,104 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PlayerIdle-Sheet2_0
+      name: Melee Attack-Sheet200_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 139
-        height: 200
+        width: 226.5
+        height: 256
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: PlayerIdle-Sheet2_1
+      name: Melee Attack-Sheet200_1
       rect:
         serializedVersion: 2
-        x: 139
+        x: 226
         y: 0
-        width: 139
-        height: 200
+        width: 226.5
+        height: 256
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: PlayerIdle-Sheet2_2
+      name: Melee Attack-Sheet200_2
       rect:
         serializedVersion: 2
-        x: 278
+        x: 452
         y: 0
-        width: 139
-        height: 200
+        width: 226.5
+        height: 256
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: PlayerIdle-Sheet2_3
+      name: Melee Attack-Sheet200_3
       rect:
         serializedVersion: 2
-        x: 417
+        x: 678
         y: 0
-        width: 139
-        height: 200
+        width: 226.5
+        height: 256
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: PlayerIdle-Sheet2_4
+      name: Melee Attack-Sheet200_4
       rect:
         serializedVersion: 2
-        x: 556
+        x: 904
         y: 0
-        width: 139
-        height: 200
+        width: 226.5
+        height: 256
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: PlayerIdle-Sheet2_5
+      name: Melee Attack-Sheet200_5
       rect:
         serializedVersion: 2
-        x: 695
+        x: 1130
         y: 0
-        width: 139
-        height: 200
+        width: 226.5
+        height: 256
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: PlayerIdle-Sheet2_6
+      name: Melee Attack-Sheet200_6
       rect:
         serializedVersion: 2
-        x: 834
+        x: 1356
         y: 0
-        width: 139
-        height: 200
+        width: 226.5
+        height: 256
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: PlayerIdle-Sheet2_7
+      name: Melee Attack-Sheet200_7
       rect:
         serializedVersion: 2
-        x: 973
+        x: 1582
         y: 0
-        width: 139
-        height: 200
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: PlayerIdle-Sheet2_8
-      rect:
-        serializedVersion: 2
-        x: 1112
-        y: 0
-        width: 139
-        height: 200
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: PlayerIdle-Sheet2_9
-      rect:
-        serializedVersion: 2
-        x: 1251
-        y: 0
-        width: 139
-        height: 200
+        width: 226.5
+        height: 256
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

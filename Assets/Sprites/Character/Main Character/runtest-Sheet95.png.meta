@@ -1,19 +1,17 @@
 fileFormatVersion: 2
-guid: 470bdbaa3762a0641aea33d689acb22a
-timeCreated: 1481226122
+guid: f00b9e14f96c046fd83908b95c38312c
+timeCreated: 1481226819
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: PlayerIdle-Sheet2_0
-    21300002: PlayerIdle-Sheet2_1
-    21300004: PlayerIdle-Sheet2_2
-    21300006: PlayerIdle-Sheet2_3
-    21300008: PlayerIdle-Sheet2_4
-    21300010: PlayerIdle-Sheet2_5
-    21300012: PlayerIdle-Sheet2_6
-    21300014: PlayerIdle-Sheet2_7
-    21300016: PlayerIdle-Sheet2_8
-    21300018: PlayerIdle-Sheet2_9
+    21300000: runtest-Sheet95_0
+    21300002: runtest-Sheet95_1
+    21300004: runtest-Sheet95_2
+    21300006: runtest-Sheet95_3
+    21300008: runtest-Sheet95_4
+    21300010: runtest-Sheet95_5
+    21300012: runtest-Sheet95_6
+    21300014: runtest-Sheet95_7
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -63,130 +61,104 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PlayerIdle-Sheet2_0
+      name: runtest-Sheet95_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 139
-        height: 200
+        x: 27
+        y: 21
+        width: 46
+        height: 67
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: PlayerIdle-Sheet2_1
+      name: runtest-Sheet95_1
       rect:
         serializedVersion: 2
-        x: 139
-        y: 0
-        width: 139
-        height: 200
+        x: 105
+        y: 24
+        width: 55
+        height: 65
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: PlayerIdle-Sheet2_2
+      name: runtest-Sheet95_2
       rect:
         serializedVersion: 2
-        x: 278
-        y: 0
-        width: 139
-        height: 200
+        x: 188
+        y: 20
+        width: 54
+        height: 68
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: PlayerIdle-Sheet2_3
+      name: runtest-Sheet95_3
       rect:
         serializedVersion: 2
-        x: 417
-        y: 0
-        width: 139
-        height: 200
+        x: 288
+        y: 19
+        width: 30
+        height: 69
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: PlayerIdle-Sheet2_4
+      name: runtest-Sheet95_4
       rect:
         serializedVersion: 2
-        x: 556
-        y: 0
-        width: 139
-        height: 200
+        x: 361
+        y: 20
+        width: 47
+        height: 69
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: PlayerIdle-Sheet2_5
+      name: runtest-Sheet95_5
       rect:
         serializedVersion: 2
-        x: 695
-        y: 0
-        width: 139
-        height: 200
+        x: 442
+        y: 24
+        width: 55
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: PlayerIdle-Sheet2_6
+      name: runtest-Sheet95_6
       rect:
         serializedVersion: 2
-        x: 834
-        y: 0
-        width: 139
-        height: 200
+        x: 526
+        y: 18
+        width: 53
+        height: 70
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: PlayerIdle-Sheet2_7
+      name: runtest-Sheet95_7
       rect:
         serializedVersion: 2
-        x: 973
-        y: 0
-        width: 139
-        height: 200
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: PlayerIdle-Sheet2_8
-      rect:
-        serializedVersion: 2
-        x: 1112
-        y: 0
-        width: 139
-        height: 200
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: PlayerIdle-Sheet2_9
-      rect:
-        serializedVersion: 2
-        x: 1251
-        y: 0
-        width: 139
-        height: 200
+        x: 626
+        y: 18
+        width: 32
+        height: 70
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
