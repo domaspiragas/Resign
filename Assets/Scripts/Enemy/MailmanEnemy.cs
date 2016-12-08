@@ -32,6 +32,8 @@ public class MailmanEnemy : MonoBehaviour {
     private bool m_redFlash;
     private float m_redFlashTimer;
 
+    private string m_idle = "mailroom_stationary";
+    private string m_attack = "mailroom_attack";
 
     private float m_health;
     // Use this for initialization
@@ -56,7 +58,7 @@ public class MailmanEnemy : MonoBehaviour {
         // Patrols left and right patrolRange distance
         if (!m_followPlayer && !m_pushedBack && m_patrol)
         {
-            m_animator.setAnimation("MovingEnemyIdle");
+            m_animator.setAnimation(m_idle);
             if (this.transform.position.x >= m_startingPosition.x + patrolRange)
             {
                 m_moveRight = false;
@@ -80,44 +82,50 @@ public class MailmanEnemy : MonoBehaviour {
         else if (m_followPlayer && !m_pushedBack)
         {
             float positionDifference = this.transform.position.x - m_playerPosition.x;
-
+            
             // our position - palyer position, if positive we're to the right of the palyer else we're to the left
             // if the player is farther away ranged attack
             if (positionDifference > 8f && positionDifference < 13f)
             {
 
                 m_animator.setFacing("Left");
-                m_rangedWeapon.EnemyShoot(Time.time, m_playerPosition);            
+                m_rangedWeapon.EnemyShoot(Time.time, m_playerPosition);
+                m_animator.setAnimation(m_attack);
             }
             else if (positionDifference < -8f && positionDifference > -13f)
             {
                 m_animator.setFacing("Right");
 
                     m_rangedWeapon.EnemyShoot(Time.time, m_playerPosition);
-                
+                m_animator.setAnimation(m_attack);
+
             }
             // if the player is out of range, move away form them.
             else if (positionDifference <= 8f && positionDifference >= 0)
             {
                 m_animator.setFacing("Right");
                 velocity.x = speed;
+                m_animator.setAnimation(m_idle);
 
             }
             else if (positionDifference >= -8f && positionDifference <= 0)
             {
                 m_animator.setFacing("Left");
                 velocity.x = -speed;
+                m_animator.setAnimation(m_idle);
             }
 
             else if (positionDifference >=13f)
             {
                 m_animator.setFacing("Left");
                 velocity.x = -speed;
+                m_animator.setAnimation(m_idle);
             }
             else
             {
                 m_animator.setFacing("Right");
                 velocity.x = speed;
+                m_animator.setAnimation(m_idle);
             }
         }
         else if (m_pushedBack)

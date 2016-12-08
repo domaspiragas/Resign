@@ -1,2 +1,3 @@
 I should be careful of those shards of glass on the floor.
 I should try rolling (left shift) past them. But, I can’t roll too much or I’ll get tired. 
+(The green orbs above represent how many times I can roll before cooldown)

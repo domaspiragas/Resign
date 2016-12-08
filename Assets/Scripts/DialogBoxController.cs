@@ -7,7 +7,7 @@ public class DialogBoxController : MonoBehaviour
 
     public Text dialogTextBox;
     private string[] m_dialogLines;
-    public float dialogTimer = 3;
+    public float dialogTimer = 4;
     private float m_dialogTimer;
     private int m_currentIndex, m_endIndex;
     private bool m_receivedDialog;
