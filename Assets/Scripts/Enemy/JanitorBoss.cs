@@ -14,6 +14,7 @@ public class JanitorBoss : MonoBehaviour
     public GameObject healthBar;
     public GameObject healthText;
     public GameObject bossHealthUI;
+    public GameObject player;
     private JanitorMeleeWeapon m_meleeWeapon;
     private JanitorCharacterController2D m_controller;
     private AnimationController2D m_animator;
@@ -332,6 +333,7 @@ public class JanitorBoss : MonoBehaviour
                 DropHealth();
             }
             bossHealthUI.SetActive(false);
+            player.gameObject.GetComponent<PlayerController>().EndGame();
             Destroy(gameObject);
         }
     }

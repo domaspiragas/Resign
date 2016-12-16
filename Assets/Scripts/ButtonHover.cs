@@ -11,12 +11,10 @@ public class ButtonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public void OnPointerEnter(PointerEventData eventData)
     {
         this.gameObject.GetComponent<Image>().sprite = hover;
-        Debug.Log("in");
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         this.gameObject.GetComponent<Image>().sprite = nonHover;
-        Debug.Log("out");
     }
 }

@@ -27,6 +27,8 @@ public class PlayerController : MonoBehaviour
     private GameObject m_meleeUI;
     private GameObject m_rangedUI;
     private GameObject m_playerHealthText;
+    public GameObject m_pausePane;
+    public GameObject m_EndPane;
     //object for raycasting
     private PlayerCharacterController2D m_controller;
     //object for animations
@@ -48,6 +50,7 @@ public class PlayerController : MonoBehaviour
     private bool m_isClimbing = false;
     private bool m_redFlash = false;
     private bool m_touchingWeapon = false;
+    private bool m_pause = false;
     //melee animation timer
     private float m_meleeTimer = 0;
     //timer for red take damage flash
@@ -142,6 +145,8 @@ public class PlayerController : MonoBehaviour
             HandleRedDamageFlash();
             HandlePickUpWeapon();
         }
+        // If it's inside of m_playerControl, can't unpause.
+        HandlePauseGame();
     }
 
     void OnTriggerEnter2D(Collider2D col)
@@ -629,11 +634,11 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if(m_ownRangedWeapon[1] && m_curRangedWeapon == 0)
+            if (m_ownRangedWeapon[1] && m_curRangedWeapon == 0)
             {
                 m_curRangedWeapon++;
             }
-            else if(m_curRangedWeapon == 1)
+            else if (m_curRangedWeapon == 1)
             {
                 m_curRangedWeapon--;
             }
@@ -838,5 +843,51 @@ public class PlayerController : MonoBehaviour
     public bool IsClimbing()
     {
         return m_isClimbing;
+    }
+    private void HandlePauseGame()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (!m_pause)
+            {
+                Time.timeScale = 0;
+                m_pause = true;
+                m_playerControl = false;
+                m_pausePane.SetActive(true);
+            }
+            else
+            {
+                Unpause();
+            }
+        }
+    }
+    public void Unpause()
+    {
+        Time.timeScale = 1;
+        m_pause = false;
+        m_playerControl = true;
+        m_pausePane.SetActive(false);
+    }
+    public void ExitToMainMenu()
+    {
+        SceneManager.LoadScene(0);
+        Unpause();
+    }
+    public void EndGame()
+    {
+        m_EndPane.SetActive(true);
+        Time.timeScale = 0;
+        m_playerControl = false;
+    }
+    public void Continue()
+    {
+        m_EndPane.SetActive(false);
+        Time.timeScale = 1;
+        m_playerControl = true;
+    }
+    public void ExitFromEndGameScreen()
+    {
+        SceneManager.LoadScene(0);
+        Continue();
     }
 }
